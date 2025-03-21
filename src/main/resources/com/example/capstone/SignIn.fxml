@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.capstone.SignInController">
+   <center>
+      <AnchorPane prefHeight="269.0" prefWidth="455.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label layoutX="167.0" layoutY="170.0" text="Email:">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="167.0" layoutY="204.0" text="Password:">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <TextField fx:id="userEmail" layoutX="284.0" layoutY="171.0" promptText="Email" />
+            <PasswordField fx:id="userPassword" layoutX="284.0" layoutY="205.0" promptText="Password" />
+            <Label layoutX="286.0" layoutY="118.0" />
+            <Button fx:id="userLogIn" layoutX="214.0" layoutY="254.0" mnemonicParsing="false" onAction="#userSignIn" text="Log In" />
+            <Button fx:id="userSignUp" layoutX="333.0" layoutY="254.0" mnemonicParsing="false" onAction="#handleSignUp" text="Sign Up" />
+         </children>
+      </AnchorPane>
+   </center>
+</BorderPane>
