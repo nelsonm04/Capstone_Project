@@ -32,9 +32,6 @@ public class SignInController {
     @FXML
     private Button userSignUp;
 
-    private FirebaseAuth auth = FirebaseAuth.getInstance(); // Get Firebase authentication instance
-
-
     @FXML
     void userSignIn(ActionEvent event) {
         signInUser();
