@@ -24,10 +24,9 @@ public class CapstoneApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        initializeFirebase();  // ✅ Ensure Firebase is initialized before loading the UI
-
+        initializeFirebase();
         scene = new Scene(loadFXML("SignIn"), 640, 480);
-        scene.getStylesheets().add(getClass().getResource("planet.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/Styles/planet.css").toExternalForm()); //global css file, is used for
         stage.setScene(scene);
         stage.setTitle("Capstone Project");
         stage.show();
