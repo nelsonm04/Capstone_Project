@@ -10,3 +10,9 @@
     -fx-font-size: 18px;
     -fx-text-fill: #444;
 }
+
+.border-pane{
+    -fx-background-image: url('Images/background.jpg');
+    -fx-background-size: cover;
+    -fx-background-position: center;
+}

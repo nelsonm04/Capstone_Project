@@ -1,40 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.capstone.SignInController">
-   <center>
-      <AnchorPane prefHeight="269.0" prefWidth="455.0" BorderPane.alignment="CENTER">
-         <children>
-            <Label layoutX="167.0" layoutY="170.0" text="Email:">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Label>
-            <Label layoutX="167.0" layoutY="204.0" text="Password:">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Label>
-            <TextField fx:id="userEmail" layoutX="284.0" layoutY="171.0" promptText="Email" />
-            <PasswordField fx:id="userPassword" layoutX="284.0" layoutY="205.0" promptText="Password" />
-            <Label layoutX="286.0" layoutY="118.0" />
-            <Button fx:id="userLogIn" layoutX="214.0" layoutY="254.0" mnemonicParsing="false" onAction="#userSignIn" text="Log In" />
-            <Button fx:id="userSignUp" layoutX="333.0" layoutY="254.0" mnemonicParsing="false" onAction="#handleSignUp" text="Sign Up" />
-            <ImageView fitHeight="145.0" fitWidth="165.0" layoutX="218.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../Images/Logo.png" />
-               </image>
-            </ImageView>
-         </children>
-      </AnchorPane>
-   </center>
-</BorderPane>
+<AnchorPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.capstone.SignInController">
+
+   <!-- Background -->
+   <AnchorPane prefHeight="600" prefWidth="1000" style="-fx-background-image: url('images/background.jpg');
+                -fx-background-size: stretch; /* Ensures full coverage */
+                -fx-background-position: center;
+                -fx-background-repeat: no-repeat;">
+   </AnchorPane>
+
+   <!-- Centered SignIn Form -->
+   <VBox alignment="CENTER" layoutX="250" layoutY="100" prefWidth="300" spacing="10">
+
+      <!-- Logo -->
+      <ImageView fitHeight="80" fitWidth="120">
+         <image>
+            <Image url="file:src/main/resources/Images/Logo.png"/>
+         </image>
+      </ImageView>
+
+      <!-- Form Container -->
+      <VBox prefHeight="200.0" prefWidth="420.0" spacing="10" style="-fx-background-color: rgba(0, 0, 0, 0.8); -fx-padding: 20; -fx-background-radius: 10;">
+
+         <!-- Email -->
+         <Label text="Email:" style="-fx-font-size: 18px; -fx-text-fill: white;"/>
+         <TextField fx:id="userEmail" promptText="Email" />
+
+         <!-- Password -->
+         <Label text="Password:" style="-fx-font-size: 18px; -fx-text-fill: white;"/>
+         <PasswordField fx:id="userPassword" promptText="Password" />
+
+         <!-- Buttons -->
+         <HBox spacing="10" alignment="CENTER">
+            <Button fx:id="userLogIn" onAction="#userSignIn" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-size: 14px;" text="Log In"/>
+            <Button fx:id="userSignUp" onAction="#handleSignUp" style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-font-size: 14px;" text="Sign Up"/>
+         </HBox>
+
+      </VBox>
+
+   </VBox>
+
+</AnchorPane>
