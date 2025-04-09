@@ -1,13 +1,16 @@
 package com.example.capstone;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -27,7 +30,7 @@ public class MainScreen implements Initializable {
     private Label monthYear;
 
     @FXML
-    private Button prevMonthButton, nextMonthButton, addEventButton;
+    private Button prevMonthButton, nextMonthButton, addEventButton, mainButton, settingButton, socialButton, eventButton;
 
 
     private int currentMonth;
@@ -43,7 +46,22 @@ public class MainScreen implements Initializable {
         updateCalendar(); // Load current month
         addEventButton.setOnAction(e -> openAddEventDialog());
 
+        // Switches the screen when clicked on
+        mainButton.setOnAction(e -> handleScreenSwitch("MainScreen"));
+        settingButton.setOnAction(e -> handleScreenSwitch("settingScreen"));
+        socialButton.setOnAction(e -> handleScreenSwitch("socialScreen"));
+        eventButton.setOnAction(e -> handleScreenSwitch("eventScreen"));
+
     }
+
+    private void handleScreenSwitch(String screenName) {
+        try {
+            CapstoneApplication.setRoot(screenName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void updateCalendar() {
         loadCalendar(currentYear, currentMonth);

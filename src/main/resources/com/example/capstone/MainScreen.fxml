@@ -44,10 +44,10 @@
             <Label text="Username" />
             <Label text="Month 2025" />
             <Pane prefHeight="150" prefWidth="150" />
-            <Button text="Main" />
-            <Button text="Social" />
-            <Button text="Events" />
-            <Button text="Settings" />
+            <Button fx:id="mainButton" text="Main" />
+            <Button fx:id="socialButton" text="Social" />
+            <Button fx:id="eventButton" text="Events" />
+            <Button fx:id="settingButton" text="Settings" />
         </VBox>
     </left>
 
