@@ -12,27 +12,25 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="720.0" prefWidth="1280.0"
-            xmlns="http://javafx.com/javafx/23.0.1"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.capstone.MainScreen">
+<BorderPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.capstone.MainScreen">
 
     <!-- Top Bar -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="20">
             <padding>
-                <Insets bottom="10" left="10" right="10" top="10"/>
+                <Insets bottom="10" left="10" right="10" top="10" />
             </padding>
 
-            <Button fx:id="prevMonthButton" text="←" onAction="#goToPreviousMonth"/>
-            <Label fx:id="monthYear" text="February 2025"/>
-            <Button fx:id="nextMonthButton" text="→" onAction="#goToNextMonth"/>
+            <Button fx:id="prevMonthButton" onAction="#goToPreviousMonth" text="←" />
+            <Label fx:id="monthYear" text="February 2025" />
+            <Button fx:id="nextMonthButton" onAction="#goToNextMonth" text="→" />
 
-            <Region HBox.hgrow="ALWAYS"/>
-            <ToggleButton text="Monthly"/>
-            <ToggleButton text="Weekly"/>
-            <ImageView fitHeight="24" fitWidth="24"/>
-            <Label text="67°"/>
+            <Region HBox.hgrow="ALWAYS" />
+         <Button fx:id="addEventButton" mnemonicParsing="false" text="Add Event" />
+            <ToggleButton text="Monthly" />
+            <ToggleButton text="Weekly" />
+            <ImageView fitHeight="24" fitWidth="24" />
+            <Label text="67°" />
         </HBox>
     </top>
 
@@ -40,16 +38,16 @@
     <left>
         <VBox alignment="TOP_CENTER" prefWidth="200.0" spacing="10">
             <padding>
-                <Insets bottom="15" left="15" right="15" top="15"/>
+                <Insets bottom="15" left="15" right="15" top="15" />
             </padding>
-            <ImageView fitHeight="80" fitWidth="80"/>
-            <Label text="Username"/>
-            <Label text="Month 2025"/>
-            <Pane prefHeight="150" prefWidth="150"/>
-            <Button text="Main"/>
-            <Button text="Social"/>
-            <Button text="Events"/>
-            <Button text="Settings"/>
+            <ImageView fitHeight="80" fitWidth="80" />
+            <Label text="Username" />
+            <Label text="Month 2025" />
+            <Pane prefHeight="150" prefWidth="150" />
+            <Button text="Main" />
+            <Button text="Social" />
+            <Button text="Events" />
+            <Button text="Settings" />
         </VBox>
     </left>
 
@@ -57,9 +55,9 @@
     <center>
         <VBox alignment="TOP_CENTER" spacing="10">
             <padding>
-                <Insets bottom="20" left="20" right="20" top="20"/>
+                <Insets bottom="20" left="20" right="20" top="20" />
             </padding>
-            <GridPane fx:id="calendarGrid" hgap="2" vgap="2" VBox.vgrow="ALWAYS"/>
+            <GridPane fx:id="calendarGrid" alignment="CENTER" hgap="2" vgap="2" VBox.vgrow="ALWAYS" />
         </VBox>
     </center>
 
