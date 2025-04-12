@@ -10,3 +10,56 @@
     -fx-font-size: 18px;
     -fx-text-fill: #444;
 }
+
+
+/* Apply a background image to the root pane */
+.root {
+    -fx-background-image: url("../Images/background.jpg");
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+/* AnchorPane container styling */
+.anchor-pane {
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+    -fx-background-radius: 15px;
+    -fx-padding: 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 10, 0.5, 0, 0);
+}
+
+/* Labels */
+.label {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+}
+
+/* TextFields and PasswordFields */
+.text-field, .password-field {
+    -fx-background-color: #e0e0e0;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-padding: 6px;
+    -fx-font-size: 14px;
+    -fx-border-color: transparent;
+    -fx-pref-width: 200px;
+}
+
+/* Buttons */
+.button {
+    -fx-background-color: #035E7B;
+    -fx-text-fill: white;
+    -fx-background-radius: 10px;
+    -fx-padding: 6px 20px;
+    -fx-font-size: 14px;
+}
+
+.button:hover {
+    -fx-background-color: #047d9f;
+}
+
+/* ImageView (Logo) */
+.image-view {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 15, 0.3, 0, 2);
+}
