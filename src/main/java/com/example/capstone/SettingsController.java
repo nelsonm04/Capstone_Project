@@ -4,6 +4,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
 import java.io.IOException;
@@ -14,11 +16,25 @@ import java.util.ResourceBundle;
 public class SettingsController implements Initializable {
 
     @FXML
-    private GridPane calendarGrid;
+    private ImageView changeAvatar;
+
     @FXML
-    private Button addEventButton, mainButton, settingButton, socialButton, eventButton;
+    private TextField changeUserName;
+
+    @FXML
+    private Button eventButton;
+
+    @FXML
+    private Button mainButton;
+
     @FXML
     private Label monthYear;
+
+    @FXML
+    private Button settingButton;
+
+    @FXML
+    private Button socialButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
