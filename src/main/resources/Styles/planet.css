@@ -1,7 +1,7 @@
 /*Global Stylesheet for button and label as of rn just wanted to test*/
 
 .button {
-    -fx-background-color: #3c8dbc;
+    -fx-background-color: #2e85bd;
     -fx-text-fill: white;
     -fx-font-size: 16px;
 }
@@ -10,3 +10,8 @@
     -fx-font-size: 18px;
     -fx-text-fill: #444;
 }
+.split-pane {
+    -fx-padding: 1 0 0 0;
+    -fx-background-color: #4373b1;
+}
+.

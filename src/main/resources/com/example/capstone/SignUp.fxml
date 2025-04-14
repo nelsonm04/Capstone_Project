@@ -8,9 +8,9 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.capstone.SignUpController">
-    <center>
-        <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../../../planet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.capstone.SignUpController">
+   <left>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" stylesheets="@../../../planet.css" BorderPane.alignment="CENTER">
             <children>
                 <Label layoutX="114.0" layoutY="91.0" text="Email:">
                     <font>
@@ -25,8 +25,8 @@
                 <TextField fx:id="signUpEmail" layoutX="269.0" layoutY="92.0" promptText="Email" />
                 <PasswordField fx:id="signUpPassword" layoutX="269.0" layoutY="132.0" promptText="Password" />
 
-                <Button fx:id="backButton" layoutX="336.0" layoutY="233.0" onAction="#handleBack" text="Back" />
-            <Button fx:id="registerButton1" layoutX="239.0" layoutY="233.0" onAction="#handleSignUp" text="Register" />
+                <Button fx:id="backButton" layoutX="336.0" layoutY="233.0" onAction="#handleBack" stylesheets="@../../../planet.css" text="Back" />
+            <Button fx:id="registerButton1" layoutX="239.0" layoutY="233.0" onAction="#handleSignUp" stylesheets="@../../../planet.css" text="Register" />
             <PasswordField fx:id="confirmPasswordField" layoutX="269.0" layoutY="175.0" promptText="Confirm Password" />
             <Label layoutX="114.0" layoutY="174.0" text="Confirm Password:">
                <font>
@@ -36,5 +36,5 @@
             <Label fx:id="passwordMatch" layoutX="286.0" layoutY="208.0" />
             </children>
         </AnchorPane>
-    </center>
+   </left>
 </BorderPane>
