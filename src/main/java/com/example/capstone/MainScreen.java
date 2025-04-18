@@ -36,6 +36,9 @@ public class MainScreen implements Initializable {
     private int currentMonth;
     private int currentYear;
 
+    @FXML
+    private Label weatherLabel;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Set to current system month and year
@@ -313,6 +316,13 @@ public class MainScreen implements Initializable {
                 }
             }
         });
+    }
+
+
+    @FXML
+    public void initialize() {
+        String weather = WeatherAPI.getWeather("New York");
+        weatherLabel.setText(weather);
     }
 
 

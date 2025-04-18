@@ -10,9 +10,9 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../../../planet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.capstone.SignInController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../../../Styles/planet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.capstone.SignInController">
    <center>
-      <AnchorPane prefHeight="269.0" prefWidth="455.0" styleClass="root" stylesheets="@../../../planet.css" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="269.0" prefWidth="455.0" styleClass="root" stylesheets="@../../../Styles/planet.css" BorderPane.alignment="CENTER">
          <children>
             <Label layoutX="167.0" layoutY="170.0" text="Email:">
                <font>

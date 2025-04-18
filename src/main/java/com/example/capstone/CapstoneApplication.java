@@ -27,7 +27,7 @@ public class CapstoneApplication extends Application {
         initializeFirebase();  // ✅ Ensure Firebase is initialized before loading the UI
 
         scene = new Scene(loadFXML("SignIn"), 640, 480);
-        scene.getStylesheets().add(getClass().getResource("planet.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/styles/planet.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("Capstone Project");
         stage.show();

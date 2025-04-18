@@ -10,8 +10,7 @@ module com.example.capstone {
     requires google.cloud.firestore;
     requires google.cloud.core;
     requires com.google.api.apicommon;
-
-
+    requires com.google.gson;
 
 
     opens com.example.capstone to javafx.fxml;
