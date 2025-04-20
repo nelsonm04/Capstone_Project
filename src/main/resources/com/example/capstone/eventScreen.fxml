@@ -40,7 +40,7 @@
             <image>
                <Image url="@../../../Images/avatar.png" />
             </image></ImageView>
-            <Label text="Username" />
+            <Label fx:id="usernameDisplay" text="Username" />
             <Label text="Month 2025" />
             <Pane prefHeight="150" prefWidth="150" />
             <Button fx:id="mainButton" text="Main" />

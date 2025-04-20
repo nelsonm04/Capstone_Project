@@ -36,8 +36,8 @@
             <padding>
                 <Insets bottom="15" left="15" right="15" top="15" />
             </padding>
-            <ImageView fitHeight="80" fitWidth="80" />
-            <Label text="Username" />
+            <ImageView fx:id="profilePicture" fitHeight="80" fitWidth="80" />
+            <Label fx:id="usernameDisplay" text="Username" />
             <Label text="Month 2025" />
             <Pane prefHeight="150" prefWidth="150" />
             <Button fx:id="mainButton" text="Main" />
@@ -52,8 +52,8 @@
                 <AnchorPane prefHeight="676.0" prefWidth="971.0">
                     <children>
                         <TextField fx:id="changeUserName" layoutX="262.0" layoutY="272.0" prefHeight="27.0" prefWidth="149.0" promptText="Change Username" />
-                        <ImageView fx:id="changeAvatar" fitHeight="265.0" fitWidth="270.0" layoutX="587.0" layoutY="153.0" pickOnBounds="true" preserveRatio="true" />
-                        <Text fill="WHITE" layoutX="683.0" layoutY="451.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Change Avatar" />
+                        <ImageView fx:id="profileImageView" fitHeight="265.0" fitWidth="270.0" layoutX="587.0" layoutY="153.0" pickOnBounds="true" preserveRatio="true" />
+                        <Text fx:id="changeAvatarText" fill="WHITE" layoutX="683.0" layoutY="451.0" onMouseClicked="#handleChangeAvatar" strokeType="OUTSIDE" strokeWidth="0.0" text="Change Avatar" />
                         <Text fill="#eb0202" layoutX="296.0" layoutY="322.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delete Account" />
                         <Text fill="WHITE" layoutX="468.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Settings">
                             <font>
