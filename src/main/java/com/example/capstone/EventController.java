@@ -7,7 +7,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -41,6 +44,9 @@ public class EventController implements Initializable {
     @FXML
     private Label weatherLabel;
 
+    @FXML
+    private ImageView profilePicture;
+
 
     public void initialize(URL location, ResourceBundle resources) {
         // Switches the screen when clicked on
@@ -53,8 +59,17 @@ public class EventController implements Initializable {
             usernameDisplay.setText(Session.getUsername());
         }
 
-//        String weather = WeatherAPI.getWeather("New York");
-//        weatherLabel.setText(weather);
+        if (Session.getProfilePicture() != null) {
+            Image sessionImage = Session.getProfilePicture();
+
+            profilePicture.setImage(sessionImage);
+
+            Circle sidebarClip = new Circle(40, 40, 40); // sidebar
+            profilePicture.setClip(sidebarClip);
+
+        }
+
+
 
     }
 

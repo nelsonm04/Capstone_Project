@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class SettingsController implements Initializable {
+public class  SettingsController implements Initializable {
 
     @FXML
     private ImageView profileImageView, profilePicture;
@@ -84,9 +84,6 @@ public class SettingsController implements Initializable {
         // Setup clicking "Change Avatar"
         changeAvatarText.setOnMouseClicked(this::handleChangeAvatar);
 
-        // Weather feature commented out
-        // String weather = WeatherAPI.getWeather("New York");
-        // weatherLabel.setText(weather);
     }
 
 
@@ -152,5 +149,4 @@ public class SettingsController implements Initializable {
             System.out.println("✅ Profile picture updated and saved to session!");
         }
     }
-
 }

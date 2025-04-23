@@ -9,9 +9,12 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -30,6 +33,9 @@ public class MainScreen implements Initializable {
 
     @FXML
     private Label monthYear;
+
+    @FXML
+    private ImageView profilePicture;
 
     @FXML
     private Button prevMonthButton, nextMonthButton, addEventButton, mainButton, settingButton, socialButton, eventButton;
@@ -62,14 +68,19 @@ public class MainScreen implements Initializable {
             usernameDisplay.setText(Session.getUsername());
         }
 
-        // try {
-        //     String weather = WeatherAPI.getWeather("New York");
-        //     weatherLabel.setText(weather);
-        // } catch (Exception ignored) {}
+        if (Session.getProfilePicture() != null) {
+            Image sessionImage = Session.getProfilePicture();
+
+            profilePicture.setImage(sessionImage);
+
+            Circle sidebarClip = new Circle(40, 40, 40); // sidebar
+            profilePicture.setClip(sidebarClip);
+
+        }
     }
     private void openAddEventDialog() {
         LocalDate today = LocalDate.now();
-        StackPane fakeCell = new StackPane();  // 🔥 Just create a fake empty cell
+        StackPane fakeCell = new StackPane();
         showEventDialog(today, fakeCell);
     }
 
@@ -210,7 +221,7 @@ public class MainScreen implements Initializable {
                         vbox.getChildren().addAll(stackPane.getChildren());
                         stackPane.getChildren().setAll(vbox);
                     }
-
+                    // Events Labels
                     Label eventLabel = new Label(eventText);
                     eventLabel.setStyle("-fx-font-size: 10; -fx-text-fill: white; -fx-cursor: hand;");
                     vbox.getChildren().add(eventLabel);
