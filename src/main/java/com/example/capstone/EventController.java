@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
 public class EventController implements Initializable {
@@ -30,7 +31,7 @@ public class EventController implements Initializable {
     private Button mainButton;
 
     @FXML
-    private Label monthYear;
+    private Label monthYear; // ID on top left
 
     @FXML
     private Button settingButton;
@@ -68,6 +69,9 @@ public class EventController implements Initializable {
             profilePicture.setClip(sidebarClip);
 
         }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        monthYear.setText(LocalDate.now().format(formatter));
 
 
 

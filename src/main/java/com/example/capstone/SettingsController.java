@@ -20,6 +20,8 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
 public class  SettingsController implements Initializable {
@@ -83,6 +85,9 @@ public class  SettingsController implements Initializable {
 
         // Setup clicking "Change Avatar"
         changeAvatarText.setOnMouseClicked(this::handleChangeAvatar);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        monthYear.setText(LocalDate.now().format(formatter));
 
     }
 

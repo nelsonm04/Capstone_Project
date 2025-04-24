@@ -15,6 +15,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
 public class SocialController implements Initializable {
@@ -57,6 +59,8 @@ public class SocialController implements Initializable {
             Circle sidebarClip = new Circle(40, 40, 40); // sidebar
             profilePicture.setClip(sidebarClip);
         }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        monthYear.setText(LocalDate.now().format(formatter));
     }
 
     private void handleScreenSwitch(String screenName) {
