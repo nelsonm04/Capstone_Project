@@ -1,0 +1,40 @@
+/* mainscreen.css */
+
+.root {
+    -fx-background-color: #1e1e2f;
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-text-fill: white;
+}
+
+.label {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
+#usernameDisplay {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+}
+
+#monthYear {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f0db4f;
+    -fx-padding: 10;
+}
+
+#calendarGrid {
+    -fx-background-color: linear-gradient(to bottom, #1a1a1a, #000000);
+    -fx-background-radius: 20;
+    -fx-padding: 25;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 12, 0.3, 0, 6);
+    -fx-alignment: center;
+    -fx-border-color: #333;
+    -fx-border-radius: 20;
+    -fx-border-width: 1;
+}
+
+
+
+
