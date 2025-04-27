@@ -1,5 +1,6 @@
 package com.example.capstone;
 
+import com.google.cloud.firestore.Firestore;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -10,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
@@ -17,6 +19,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class EventController implements Initializable {
@@ -48,6 +52,9 @@ public class EventController implements Initializable {
     @FXML
     private ImageView profilePicture;
 
+    @FXML
+    private VBox eventListVBox;
+
 
     public void initialize(URL location, ResourceBundle resources) {
         // Switches the screen when clicked on
@@ -73,7 +80,7 @@ public class EventController implements Initializable {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         monthYear.setText(LocalDate.now().format(formatter));
 
-
+        loadUpcomingEvents();
 
     }
 
@@ -85,7 +92,7 @@ public class EventController implements Initializable {
             Stage stage = (Stage) mainButton.getScene().getWindow(); // or any button
             Scene scene = new Scene(root);
 
-            // 🛠 Attach CSS
+            // Attach CSS
             scene.getStylesheets().add(getClass().getResource("/styles/planet.css").toExternalForm());
 
             stage.setScene(scene);
@@ -94,5 +101,59 @@ public class EventController implements Initializable {
             e.printStackTrace();
         }
     }
+
+    private static class EventData {
+        String title;
+        String time;
+        LocalDate date;
+
+        EventData(String title, String time, LocalDate date) {
+            this.title = title;
+            this.time = time;
+            this.date = date;
+        }
+    }
+
+    private void loadUpcomingEvents() {
+        Firestore db = CapstoneApplication.fstore;
+        String uid = Session.getUid();
+
+        eventListVBox.getChildren().clear(); // Clear any old ones first
+
+        try {
+            var future = db.collection("users")
+                    .document(uid)
+                    .collection("events")
+                    .orderBy("date")
+                    .orderBy("time") // Optional: to also sort within the same day
+                    .get();
+
+            var querySnapshot = future.get();
+
+            List<EventData> events = new ArrayList<>();
+            for (var doc : querySnapshot.getDocuments()) {
+                String title = doc.getString("title");
+                String time = doc.getString("time");
+                String dateStr = doc.getString("date");
+
+                if (title != null && time != null && dateStr != null) {
+                    events.add(new EventData(title, time, LocalDate.parse(dateStr)));
+                }
+            }
+
+            // Now display the sorted list
+            for (EventData event : events) {
+                Label eventLabel = new Label(event.date.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))
+                        + " | " + event.time + " | " + event.title);
+                eventLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: white;");
+                eventListVBox.getChildren().add(eventLabel);
+            }
+
+        } catch (Exception e) {
+            System.out.println("Failed to load events: " + e.getMessage());
+        }
+
+    }
+
 
 }

@@ -37,7 +37,6 @@
             </padding>
             <ImageView fx:id="profilePicture" fitHeight="80" fitWidth="80" />
             <Label fx:id="usernameDisplay" text="Username" />
-            <Label text="Month 2025" />
             <Pane prefHeight="150" prefWidth="150" />
             <Button fx:id="mainButton" text="Main" />
             <Button fx:id="socialButton" text="Social" />
