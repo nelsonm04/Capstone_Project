@@ -79,6 +79,8 @@ public class EventController implements Initializable {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         monthYear.setText(LocalDate.now().format(formatter));
+        monthYear.setStyle("-fx-font-size: 12px; -fx-font-weight: bold;");
+
 
         loadUpcomingEvents();
 
@@ -125,7 +127,7 @@ public class EventController implements Initializable {
                     .document(uid)
                     .collection("events")
                     .orderBy("date")
-                    .orderBy("time") // Optional: to also sort within the same day
+                    .orderBy("time")
                     .get();
 
             var querySnapshot = future.get();

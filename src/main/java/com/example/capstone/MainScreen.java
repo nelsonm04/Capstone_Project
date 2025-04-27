@@ -91,12 +91,24 @@ public class MainScreen implements Initializable {
         TextField timeField = new TextField();
         timeField.setPromptText("e.g. 2:30 PM");
         timeField.textProperty().addListener((obs, oldText, newText) -> {
-            if (newText.isEmpty() || newText.matches("[0-9:apmAPM]*")) {
-                timeField.setText(newText.toUpperCase());
-            } else {
+            if (newText.isEmpty()) {
+                return;
+            }
+            String cleaned = newText.replaceAll("[^0-9APMapm:]", "").toUpperCase();
+
+            // If user typed 2 digits and no colon yet, auto-insert colon
+            if (cleaned.length() == 2 && !cleaned.contains(":")) {
+                cleaned = cleaned.substring(0, 2) + ":";
+            }
+
+            // Only allow 0-9, :, A, P, M
+            if (!cleaned.matches("[0-9:APM]*")) {
                 timeField.setText(oldText);
+            } else {
+                timeField.setText(cleaned);
             }
         });
+
 
         Label dateLabel = new Label("Date:");
         DatePicker datePicker = new DatePicker();
@@ -330,12 +342,24 @@ public class MainScreen implements Initializable {
 
         // Typing restriction (allow only digits, colon, A/P/M, no spaces)
         timeField.textProperty().addListener((obs, oldText, newText) -> {
-            if (newText.isEmpty() || newText.matches("[0-9:apmAPM]*")) {
-                timeField.setText(newText.toUpperCase());
-            } else {
+            if (newText.isEmpty()) {
+                return;
+            }
+            String cleaned = newText.replaceAll("[^0-9APMapm:]", "").toUpperCase();
+
+            // If user typed 2 digits and no colon yet, auto-insert colon
+            if (cleaned.length() == 2 && !cleaned.contains(":")) {
+                cleaned = cleaned.substring(0, 2) + ":";
+            }
+
+            // Only allow 0-9, :, A, P, M
+            if (!cleaned.matches("[0-9:APM]*")) {
                 timeField.setText(oldText);
+            } else {
+                timeField.setText(cleaned);
             }
         });
+
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -486,14 +510,25 @@ public class MainScreen implements Initializable {
         TextField timeField = new TextField();
         timeField.setPromptText("e.g. 2:30PM");
 
-        // Typing restriction (only 0-9, colon, A/P/M, no spaces)
         timeField.textProperty().addListener((obs, oldText, newText) -> {
-            if (newText.isEmpty() || newText.matches("[0-9:apmAPM]*")) {
-                timeField.setText(newText.toUpperCase());
-            } else {
+            if (newText.isEmpty()) {
+                return;
+            }
+            String cleaned = newText.replaceAll("[^0-9APMapm:]", "").toUpperCase();
+
+            // If user typed 2 digits and no colon yet, auto-insert colon
+            if (cleaned.length() == 2 && !cleaned.contains(":")) {
+                cleaned = cleaned.substring(0, 2) + ":";
+            }
+
+            // Only allow 0-9, :, A, P, M
+            if (!cleaned.matches("[0-9:APM]*")) {
                 timeField.setText(oldText);
+            } else {
+                timeField.setText(cleaned);
             }
         });
+
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
