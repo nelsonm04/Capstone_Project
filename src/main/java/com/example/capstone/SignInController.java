@@ -89,7 +89,10 @@ public class SignInController {
                     Stage stage = (Stage) userLogIn.getScene().getWindow();
                     Scene scene = new Scene(root);
 
+
+
                     scene.getStylesheets().add(getClass().getResource("/styles/planet.css").toExternalForm());
+                    scene.getStylesheets().add(getClass().getResource("/styles/mainscreen.css").toExternalForm());
 
                     stage.setScene(scene);
                     stage.show();

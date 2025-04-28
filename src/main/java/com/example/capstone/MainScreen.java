@@ -176,7 +176,15 @@ public class MainScreen implements Initializable {
             Parent root = loader.load();
             Stage stage = (Stage) mainButton.getScene().getWindow();
             Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/styles/planet.css").toExternalForm());
+
+            scene.getStylesheets().clear();
+
+            if (screenName.equals("MainScreen")) {
+                scene.getStylesheets().add(getClass().getResource("/Styles/mainscreen.css").toExternalForm());
+            }
+            scene.getStylesheets().add(getClass().getResource("/Styles/planet.css").toExternalForm());
+
+
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {

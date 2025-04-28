@@ -71,7 +71,9 @@ public class SocialController implements Initializable {
             Stage stage = (Stage) mainButton.getScene().getWindow(); // or any button
             Scene scene = new Scene(root);
 
-            // 🛠 Attach CSS
+            if (screenName.equals("MainScreen")) {
+                scene.getStylesheets().add(getClass().getResource("/Styles/mainscreen.css").toExternalForm());
+            }
             scene.getStylesheets().add(getClass().getResource("/styles/planet.css").toExternalForm());
 
             stage.setScene(scene);

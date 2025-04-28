@@ -99,6 +99,10 @@ public class  SettingsController implements Initializable {
 
             Stage stage = (Stage) mainButton.getScene().getWindow();
             Scene scene = new Scene(root);
+            if (screenName.equals("MainScreen")) {
+                scene.getStylesheets().add(getClass().getResource("/Styles/mainscreen.css").toExternalForm());
+            }
+
             scene.getStylesheets().add(getClass().getResource("/styles/planet.css").toExternalForm());
 
             stage.setScene(scene);
