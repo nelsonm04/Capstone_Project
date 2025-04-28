@@ -141,16 +141,22 @@ public class MainScreen implements Initializable {
         });
 
         dialog.showAndWait().ifPresent(eventData -> {
-            if (eventData.name != null && eventData.time != null && eventData.date != null) {
-                if (!isValidTime(eventData.time)) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Please enter a valid time (1-12 hours and 00-59 minutes, e.g., 2:30PM).");
+            if (eventData.name != null && eventData.date != null) {
+                String timeInput = eventData.time == null ? "" : eventData.time.trim();
+
+                if (!timeInput.isEmpty() && !isValidTime(timeInput)) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Please enter a valid time format (e.g., 2:30PM) or leave it blank.");
                     alert.showAndWait();
-                    return; // Don't save
+                    return;
                 }
-                saveEventToFirestore(eventData.name, eventData.time, eventData.date);
+
+                String timeToSave = timeInput.isEmpty() ? "N/A" : timeInput;
+
+                saveEventToFirestore(eventData.name, timeToSave, eventData.date);
                 updateCalendar();
             }
         });
+
 
 
 
@@ -315,7 +321,8 @@ public class MainScreen implements Initializable {
                         stackPane.getChildren().setAll(vbox);
                     }
                     // Events Labels
-                    Label eventLabel = new Label(eventText);
+                    String displayText = eventText.startsWith("N/A - ") ? eventText.substring(6) : eventText;
+                    Label eventLabel = new Label(displayText);
                     eventLabel.setStyle("-fx-font-size: 10; -fx-text-fill: white; -fx-cursor: hand;");
 
                     eventLabel.setOnMouseClicked(e -> {
@@ -559,15 +566,21 @@ public class MainScreen implements Initializable {
 
         dialog.showAndWait().ifPresent(eventData -> {
             if (eventData.name != null && eventData.time != null) {
-                if (!isValidTime(eventData.time)) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Please enter a valid time (1-12 hours and 00-59 minutes, e.g., 2:30PM).");
+                String timeInput = eventData.time.trim();
+
+                if (!timeInput.isEmpty() && !isValidTime(timeInput)) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Please enter a valid time format (e.g., 2:30PM) or leave it blank.");
                     alert.showAndWait();
                     return;
                 }
-                saveEventToFirestore(eventData.name, eventData.time, date);
+
+                String timeToSave = timeInput.isEmpty() ? "N/A" : timeInput;
+
+                saveEventToFirestore(eventData.name, timeToSave, date);
                 updateCalendar();
             }
         });
+
     }
 
 
