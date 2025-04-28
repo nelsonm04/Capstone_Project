@@ -42,6 +42,8 @@ public class MainScreen implements Initializable {
 
     private int currentMonth;
     private int currentYear;
+    private EventData lastDeletedEvent;
+    private LocalDate lastDeletedDate;
 
     @FXML
     private Label weatherLabel;
@@ -79,10 +81,93 @@ public class MainScreen implements Initializable {
         }
     }
     private void openAddEventDialog() {
-        LocalDate today = LocalDate.now();
-        StackPane fakeCell = new StackPane();
-        showEventDialog(today, fakeCell);
+        Dialog<EventDataWithDate> dialog = new Dialog<>();
+        dialog.setTitle("New Event");
+
+        Label nameLabel = new Label("Event:");
+        TextField nameField = new TextField();
+
+        Label timeLabel = new Label("Time:");
+        TextField timeField = new TextField();
+        timeField.setPromptText("e.g. 2:30 PM");
+        timeField.textProperty().addListener((obs, oldText, newText) -> {
+            if (newText.isEmpty()) {
+                return;
+            }
+            String cleaned = newText.replaceAll("[^0-9APMapm:]", "").toUpperCase();
+
+            // If user typed 2 digits and no colon yet, auto-insert colon
+            if (cleaned.length() == 2 && !cleaned.contains(":")) {
+                cleaned = cleaned.substring(0, 2) + ":";
+            }
+
+            // Only allow 0-9, :, A, P, M
+            if (!cleaned.matches("[0-9:APM]*")) {
+                timeField.setText(oldText);
+            } else {
+                timeField.setText(cleaned);
+            }
+        });
+
+
+        Label dateLabel = new Label("Date:");
+        DatePicker datePicker = new DatePicker();
+        datePicker.setValue(LocalDate.now()); // Default to today
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.add(nameLabel, 0, 0);
+        grid.add(nameField, 1, 0);
+        grid.add(timeLabel, 0, 1);
+        grid.add(timeField, 1, 1);
+        grid.add(dateLabel, 0, 2);
+        grid.add(datePicker, 1, 2);
+
+        dialog.getDialogPane().setContent(grid);
+
+        ButtonType addButtonType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(addButtonType, ButtonType.CANCEL);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == addButtonType) {
+                return new EventDataWithDate(
+                        nameField.getText(),
+                        timeField.getText(),
+                        datePicker.getValue()
+                );
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(eventData -> {
+            if (eventData.name != null && eventData.time != null && eventData.date != null) {
+                if (!isValidTime(eventData.time)) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Please enter a valid time (1-12 hours and 00-59 minutes, e.g., 2:30PM).");
+                    alert.showAndWait();
+                    return; // Don't save
+                }
+                saveEventToFirestore(eventData.name, eventData.time, eventData.date);
+                updateCalendar();
+            }
+        });
+
+
+
     }
+    private static class EventDataWithDate {
+        String name;
+        String time;
+        LocalDate date;
+
+        EventDataWithDate(String name, String time, LocalDate date) {
+            this.name = name;
+            this.time = time;
+            this.date = date;
+        }
+    }
+
+
 
 
     private void handleScreenSwitch(String screenName) {
@@ -154,7 +239,7 @@ public class MainScreen implements Initializable {
                 Label dateLabel = new Label(String.valueOf(date.getDayOfMonth()));
                 VBox vbox = new VBox(dateLabel);
                 vbox.setSpacing(5);
-                vbox.setMouseTransparent(true);
+                vbox.setMouseTransparent(false);
                 cell.getChildren().add(vbox);
 
                 cell.setOnMouseClicked(e -> showEventDialog(date, cell));
@@ -224,11 +309,194 @@ public class MainScreen implements Initializable {
                     // Events Labels
                     Label eventLabel = new Label(eventText);
                     eventLabel.setStyle("-fx-font-size: 10; -fx-text-fill: white; -fx-cursor: hand;");
+
+                    eventLabel.setOnMouseClicked(e -> {
+                        e.consume();
+                        showEditOrDeleteDialog(eventText, date);
+                    });
+
+
+
                     vbox.getChildren().add(eventLabel);
                     break;
                 }
             }
         }
+    }
+    private void showEditOrDeleteDialog(String oldEventText, LocalDate date) {
+        String[] parts = oldEventText.split(" - ", 2);
+        if (parts.length != 2) return;
+
+        String oldTime = parts[0].trim();
+        String oldTitle = parts[1].trim();
+
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Edit Event");
+
+        Label nameLabel = new Label("Event:");
+        TextField nameField = new TextField(oldTitle);
+
+        Label timeLabel = new Label("Time:");
+        TextField timeField = new TextField(oldTime);
+        timeField.setPromptText("e.g. 2:30PM");
+
+        // Typing restriction (allow only digits, colon, A/P/M, no spaces)
+        timeField.textProperty().addListener((obs, oldText, newText) -> {
+            if (newText.isEmpty()) {
+                return;
+            }
+            String cleaned = newText.replaceAll("[^0-9APMapm:]", "").toUpperCase();
+
+            // If user typed 2 digits and no colon yet, auto-insert colon
+            if (cleaned.length() == 2 && !cleaned.contains(":")) {
+                cleaned = cleaned.substring(0, 2) + ":";
+            }
+
+            // Only allow 0-9, :, A, P, M
+            if (!cleaned.matches("[0-9:APM]*")) {
+                timeField.setText(oldText);
+            } else {
+                timeField.setText(cleaned);
+            }
+        });
+
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.add(nameLabel, 0, 0);
+        grid.add(nameField, 1, 0);
+        grid.add(timeLabel, 0, 1);
+        grid.add(timeField, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Two buttons: Save and Delete
+        ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
+        ButtonType deleteButtonType = new ButtonType("Delete", ButtonBar.ButtonData.LEFT);
+        ButtonType cancelButtonType = ButtonType.CANCEL;
+
+        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, deleteButtonType, cancelButtonType);
+
+        dialog.setResultConverter(dialogButton -> dialogButton);
+
+        dialog.showAndWait().ifPresent(result -> {
+            if (result == saveButtonType) {
+                if (!nameField.getText().isEmpty() && !timeField.getText().isEmpty()) {
+                    if (!timeField.getText().matches("^\\d{1,2}:\\d{2}(AM|PM)$")) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR, "Please enter a valid time format (e.g., 2:30PM).");
+                        alert.showAndWait();
+                        return;
+                    }
+                    String[] timeParts = timeField.getText().replace("AM", "").replace("PM", "").split(":");
+                    try {
+                        int hour = Integer.parseInt(timeParts[0]);
+                        int minute = Integer.parseInt(timeParts[1]);
+                        if (hour < 1 || hour > 12 || minute < 0 || minute > 59) {
+                            Alert alert = new Alert(Alert.AlertType.ERROR, "Please enter a valid time (1-12 hours and 00-59 minutes).");
+                            alert.showAndWait();
+                            return;
+                        }
+                    } catch (NumberFormatException ex) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR, "Invalid time format.");
+                        alert.showAndWait();
+                        return;
+                    }
+
+                    updateEventInFirestore(oldTitle, oldTime, date, nameField.getText(), timeField.getText());
+                    updateCalendar();
+                }
+            } else if (result == deleteButtonType) {
+                deleteEventFromFirestore(oldTime + " - " + oldTitle, date);
+                updateCalendar();
+            }
+            // Cancel does nothing
+        });
+
+    }
+
+
+    private void updateEventInFirestore(String oldTitle, String oldTime, LocalDate date, String newTitle, String newTime) {
+        Firestore db = CapstoneApplication.fstore;
+        String uid = Session.getUid();
+
+        try {
+            var docs = db.collection("users")
+                    .document(uid)
+                    .collection("events")
+                    .whereEqualTo("title", oldTitle)
+                    .whereEqualTo("time", oldTime)
+                    .whereEqualTo("date", date.toString())
+                    .get()
+                    .get()
+                    .getDocuments();
+
+            for (var doc : docs) {
+                doc.getReference().update("title", newTitle, "time", newTime);
+            }
+
+            System.out.println("Event updated!");
+        } catch (Exception e) {
+            System.out.println("Failed to update event: " + e.getMessage());
+        }
+    }
+
+    private void deleteEventFromFirestore(String eventText, LocalDate date) {
+        Firestore db = CapstoneApplication.fstore;
+        String uid = Session.getUid();
+
+        String[] parts = eventText.split(" - ", 2);
+        if (parts.length != 2) return;
+
+        String time = parts[0].trim();
+        String title = parts[1].trim();
+
+        try {
+            // Finds the event that matches the label
+            var docs = db.collection("users")
+                    .document(uid)
+                    .collection("events")
+                    .whereEqualTo("title", title)
+                    .whereEqualTo("time", time)
+                    .whereEqualTo("date", date.toString())
+                    .get()
+                    .get()
+                    .getDocuments();
+
+            if (!docs.isEmpty()) {
+                lastDeletedEvent = new EventData(title, time);
+                lastDeletedDate = date;
+
+                docs.forEach(doc -> doc.getReference().delete());
+
+                showUndoDialog();
+            }
+
+        } catch (Exception e) {
+            System.out.println("Failed to delete: " + title);
+            e.printStackTrace();
+        }
+    }
+    private void showUndoDialog() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Event Deleted");
+        alert.setHeaderText(null);
+        alert.setContentText("Event deleted. Click OK to undo.");
+
+        ButtonType undoButton = new ButtonType("Undo");
+        ButtonType closeButton = new ButtonType("Dismiss", ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(undoButton, closeButton);
+
+        alert.showAndWait().ifPresent(response -> {
+            if (response == undoButton && lastDeletedEvent != null && lastDeletedDate != null) {
+                saveEventToFirestore(lastDeletedEvent.name, lastDeletedEvent.time, lastDeletedDate);
+                updateCalendar(); // refresh UI
+            }
+
+            // Clear memory
+            lastDeletedEvent = null;
+            lastDeletedDate = null;
+        });
     }
 
     private void showEventDialog(LocalDate date, StackPane cell) {
@@ -240,7 +508,27 @@ public class MainScreen implements Initializable {
 
         Label timeLabel = new Label("Time:");
         TextField timeField = new TextField();
-        timeField.setPromptText("e.g. 2:30 PM");
+        timeField.setPromptText("e.g. 2:30PM");
+
+        timeField.textProperty().addListener((obs, oldText, newText) -> {
+            if (newText.isEmpty()) {
+                return;
+            }
+            String cleaned = newText.replaceAll("[^0-9APMapm:]", "").toUpperCase();
+
+            // If user typed 2 digits and no colon yet, auto-insert colon
+            if (cleaned.length() == 2 && !cleaned.contains(":")) {
+                cleaned = cleaned.substring(0, 2) + ":";
+            }
+
+            // Only allow 0-9, :, A, P, M
+            if (!cleaned.matches("[0-9:APM]*")) {
+                timeField.setText(oldText);
+            } else {
+                timeField.setText(cleaned);
+            }
+        });
+
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -263,11 +551,18 @@ public class MainScreen implements Initializable {
 
         dialog.showAndWait().ifPresent(eventData -> {
             if (eventData.name != null && eventData.time != null) {
+                if (!isValidTime(eventData.time)) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Please enter a valid time (1-12 hours and 00-59 minutes, e.g., 2:30PM).");
+                    alert.showAndWait();
+                    return;
+                }
                 saveEventToFirestore(eventData.name, eventData.time, date);
                 updateCalendar();
             }
         });
     }
+
+
 
     private void saveEventToFirestore(String title, String time, LocalDate date) {
         Firestore db = CapstoneApplication.fstore;
@@ -285,9 +580,9 @@ public class MainScreen implements Initializable {
                     .collection("events")
                     .add(eventData)
                     .get();
-            System.out.println("✅ Event saved!");
+            System.out.println("Event saved!");
         } catch (Exception e) {
-            System.out.println("❌ Failed to save event: " + e.getMessage());
+            System.out.println("Failed to save event: " + e.getMessage());
         }
     }
 
@@ -300,4 +595,22 @@ public class MainScreen implements Initializable {
             this.time = time;
         }
     }
+
+    private boolean isValidTime(String time) {
+        if (!time.matches("^\\d{1,2}:\\d{2}(AM|PM)$")) {
+            return false; // wrong pattern
+        }
+        String[] parts = time.replace("AM", "").replace("PM", "").split(":");
+        try {
+            int hour = Integer.parseInt(parts[0]);
+            int minute = Integer.parseInt(parts[1]);
+            if (hour < 1 || hour > 12 || minute < 0 || minute > 59) {
+                return false; // invalid hour or minute
+            }
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
+    }
+
 }
