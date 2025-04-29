@@ -76,6 +76,8 @@ public class SignInController {
 
                 if (username != null) {
                     // After getting username and uid
+                    User user = new User(uid,email,username);
+                    MainScreen.setCurrentUser(user);
                     Session.setUsername(username);
                     Session.setUid(uid);
                     Session.setEmail(email);  // you already know email from login
