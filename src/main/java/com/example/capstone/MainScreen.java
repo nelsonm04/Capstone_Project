@@ -52,6 +52,17 @@ public class MainScreen implements Initializable {
         usernameDisplay.setText(username);
     }
 
+    private static User currentUser;
+    public static void setCurrentUser(User user) {
+        currentUser = user;
+    }
+    public static User getCurrentUser() {
+        return currentUser;
+    }
+
+    User user = MainScreen.getCurrentUser();
+    String uid = user.getUid();
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         LocalDate now = LocalDate.now();

@@ -1,13 +1,19 @@
 package com.example.capstone;
 
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.WriteResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.cloud.FirestoreClient;
+import com.sun.tools.javac.Main;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -22,6 +28,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class  SettingsController implements Initializable {
@@ -31,6 +38,9 @@ public class  SettingsController implements Initializable {
 
     @FXML
     private TextField changeUserName;
+
+    @FXML
+    private Text deleteAccount;
 
     @FXML
     private Text changeAvatarText;
@@ -55,6 +65,12 @@ public class  SettingsController implements Initializable {
 
     @FXML
     private Label weatherLabel;
+
+    private static User currentUser;
+
+    public static void setCurrentUser(User user) {
+        currentUser = user;
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -88,6 +104,8 @@ public class  SettingsController implements Initializable {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         monthYear.setText(LocalDate.now().format(formatter));
+
+        currentUser = MainScreen.getCurrentUser();
 
     }
 
@@ -145,7 +163,7 @@ public class  SettingsController implements Initializable {
             profilePicture.setImage(newImage);
             profileImageView.setImage(newImage);
 
-            // 🔥 Save to session
+            // Save to session
             Session.setProfilePicture(newImage);
 
             // Re-clip
@@ -158,4 +176,59 @@ public class  SettingsController implements Initializable {
             System.out.println("✅ Profile picture updated and saved to session!");
         }
     }
+
+    @FXML
+    private void deleteUserAccount(MouseEvent event) {
+        if (currentUser == null) {
+            System.out.println("No user is currently signed in.");
+            return;
+        }
+
+        // Confirmation popup
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm Account Deletion");
+        alert.setHeaderText("Are you sure you want to delete your account?");
+        alert.setContentText("This action cannot be undone.");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            String uid = currentUser.getUid();
+
+            try {
+
+                Firestore db = FirestoreClient.getFirestore();
+                ApiFuture<WriteResult> writeResult = db.collection("users").document(uid).delete();
+                writeResult.get();
+
+                FirebaseAuth.getInstance().deleteUser(uid);
+                System.out.println("User deleted from Firebase Authentication.");
+                System.out.println("User data deleted from Firestore.");
+                Platform.runLater(this::goToSignInScreen);
+
+            } catch (FirebaseAuthException e) {
+                System.out.println("Error deleting Firebase user: " + e.getMessage());
+                e.printStackTrace();
+            } catch (Exception e) {
+                System.out.println("Error deleting Firestore data: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void goToSignInScreen(){
+        try{
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/capstone/SignIn.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) deleteAccount.getScene().getWindow();
+            Scene scene = new Scene(root);
+
+            scene.getStylesheets().add(getClass().getResource("/Styles/planet.css").toExternalForm());
+            stage.setScene(scene);
+            stage.show();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+
 }
