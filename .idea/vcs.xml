@@ -2,8 +2,5 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/main/resources/com/example/capstone/IdeaProjects/Assignment2_DS2" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/main/resources/com/example/capstone/IdeaProjects/CSC311_Assignment_3" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/src/main/resources/com/example/capstone/IdeaProjects/Capstone_Project" vcs="Git" />
   </component>
 </project>

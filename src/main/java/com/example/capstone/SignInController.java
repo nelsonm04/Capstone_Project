@@ -45,7 +45,7 @@ public class SignInController {
             return;
         }
         try {
-            String apiKey = "AIzaSyDVmD5jdc-iO7sOZ0Bn5F7-ZEoLkk17bVM"; // 🔥 (Reminder: protect API key if you go public)
+            String apiKey = "AIzaSyDVmD5jdc-iO7sOZ0Bn5F7-ZEoLkk17bVM"; // (Reminder: protect API key if you go public)
 
             String firebaseAuthUrl = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + apiKey;
 
@@ -65,7 +65,6 @@ public class SignInController {
             int responseCode = conn.getResponseCode();
 
             if (responseCode == 200) {
-                // ✅ Login success!
 
                 // Step 1: Get UID from FirebaseAuth
                 UserRecord userRecord = CapstoneApplication.fauth.getUserByEmail(email);

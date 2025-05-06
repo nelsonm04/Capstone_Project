@@ -6,7 +6,6 @@ import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.cloud.FirestoreClient;
-import com.sun.tools.javac.Main;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -144,7 +143,7 @@ public class  SettingsController implements Initializable {
             Circle centerClip = new Circle(135, 135, 135); // Big one
             profileImageView.setClip(centerClip);
         } catch (Exception e) {
-            System.out.println("❌ Failed to load default avatar: " + e.getMessage());
+            System.out.println(" Failed to load default avatar: " + e.getMessage());
         }
     }
 
@@ -173,7 +172,7 @@ public class  SettingsController implements Initializable {
             Circle centerClip = new Circle(135, 135, 135);
             profileImageView.setClip(centerClip);
 
-            System.out.println("✅ Profile picture updated and saved to session!");
+            System.out.println("Profile picture updated and saved to session!");
         }
     }
 
@@ -193,25 +192,24 @@ public class  SettingsController implements Initializable {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             String uid = currentUser.getUid();
-
+            Firestore db = FirestoreClient.getFirestore();
+            db.collection("users").document(uid).delete().addListener(() -> {
+                System.out.println(" Firestore user document deleted.");
             try {
-
-                Firestore db = FirestoreClient.getFirestore();
-                ApiFuture<WriteResult> writeResult = db.collection("users").document(uid).delete();
-                writeResult.get();
-
                 FirebaseAuth.getInstance().deleteUser(uid);
                 System.out.println("User deleted from Firebase Authentication.");
-                System.out.println("User data deleted from Firestore.");
-                Platform.runLater(this::goToSignInScreen);
+                Platform.runLater(() -> {
+                    showAlert(Alert.AlertType.INFORMATION, "Account deleted successfully.");
+                    goToSignInScreen();
+                });
 
-            } catch (FirebaseAuthException e) {
-                System.out.println("Error deleting Firebase user: " + e.getMessage());
-                e.printStackTrace();
-            } catch (Exception e) {
-                System.out.println("Error deleting Firestore data: " + e.getMessage());
-                e.printStackTrace();
+            }  catch (FirebaseAuthException e) {
+                System.err.println(" Failed to delete user from Firebase Auth: " + e.getMessage());
+                Platform.runLater(() -> showAlert(Alert.AlertType.ERROR, "Auth deletion failed."));
             }
+
+            }, Runnable::run); // Executes on JavaFX thread
+
         }
     }
 
@@ -229,6 +227,44 @@ public class  SettingsController implements Initializable {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    private void changeUsernameOnAction() {
+        String newUsername = changeUserName.getText().trim();
+
+        if (newUsername.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Username cannot be empty.");
+            return;
+        }
+
+        if (currentUser == null) {
+            showAlert(Alert.AlertType.ERROR, "No user is currently signed in.");
+            return;
+        }
+
+        // Update UI
+        usernameDisplay.setText(newUsername);
+        Session.setUsername(newUsername);  // Persist in session
+
+        // Update Firestore
+        Firestore db = FirestoreClient.getFirestore();
+        db.collection("users").document(currentUser.getUid())
+                .update("username", newUsername)
+                .addListener(() -> {
+                    System.out.println("Username successfully updated in Firestore.");
+                    Platform.runLater(() -> showAlert(Alert.AlertType.INFORMATION, "Username updated!"));
+                }, Runnable::run);
+    }
+
+    private void showAlert(Alert.AlertType type, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle("Username Change");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+
 
 
 }

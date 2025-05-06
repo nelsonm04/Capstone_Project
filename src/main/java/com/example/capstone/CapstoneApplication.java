@@ -24,7 +24,7 @@ public class CapstoneApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        initializeFirebase();  // ✅ Ensure Firebase is initialized before loading the UI
+        initializeFirebase();  // Ensure Firebase is initialized before loading the UI
 
         scene = new Scene(loadFXML("SignIn"), 640, 480);
         scene.getStylesheets().add(getClass().getResource("/styles/planet.css").toExternalForm());
@@ -43,7 +43,7 @@ public class CapstoneApplication extends Application {
     }
 
     private void initializeFirebase() {
-        if (FirebaseApp.getApps().isEmpty()) {  // ✅ Prevents duplicate Firebase initialization
+        if (FirebaseApp.getApps().isEmpty()) {  // Prevents duplicate Firebase initialization
             try {
                 FileInputStream serviceAccount = new FileInputStream("src/main/resources/Firebase/capstoneKey.json");
 
@@ -55,15 +55,15 @@ public class CapstoneApplication extends Application {
                 fstore = FirestoreClient.getFirestore();
                 fauth = FirebaseAuth.getInstance();
 
-                System.out.println("✅ Firebase Initialized Successfully");
+                System.out.println("Firebase Initialized Successfully");
 
             } catch (IOException e) {
-                System.err.println("❌ Failed to initialize Firebase: " + e.getMessage());
+                System.err.println("Failed to initialize Firebase: " + e.getMessage());
             }
         } else {
             fstore = FirestoreClient.getFirestore();
             fauth = FirebaseAuth.getInstance();
-            System.out.println("ℹ️ Firebase was already initialized.");
+            System.out.println("Firebase was already initialized.");
         }
     }
 

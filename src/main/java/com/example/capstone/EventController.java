@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -147,11 +148,26 @@ public class EventController implements Initializable {
 
             // Now display the sorted list
             for (EventData event : events) {
-                Label eventLabel = new Label(event.date.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))
-                        + " | " + event.time + " | " + event.title);
-                eventLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: white;");
-                eventListVBox.getChildren().add(eventLabel);
+                HBox eventBox = new HBox(10);
+                eventBox.setStyle("-fx-padding: 10; -fx-background-color: #2a2a2a; -fx-background-radius: 8;");
+
+                Label dateLabel = new Label(event.date.format(DateTimeFormatter.ofPattern("MMM dd, yyyy")));
+                Label timeLabel = new Label(event.time);
+                Label titleLabel = new Label(event.title);
+
+                // Optional: Set min widths for consistent alignment
+                dateLabel.setMinWidth(120);
+                timeLabel.setMinWidth(80);
+                titleLabel.setMinWidth(200);
+
+                for (Label label : List.of(dateLabel, timeLabel, titleLabel)) {
+                    label.setStyle("-fx-font-size: 16px; -fx-text-fill: white;");
+                }
+
+                eventBox.getChildren().addAll(dateLabel, timeLabel, titleLabel);
+                eventListVBox.getChildren().add(eventBox);
             }
+
 
         } catch (Exception e) {
             System.out.println("Failed to load events: " + e.getMessage());

@@ -50,7 +50,7 @@
          <children>
                 <AnchorPane prefHeight="676.0" prefWidth="971.0">
                     <children>
-                        <TextField fx:id="changeUserName" layoutX="262.0" layoutY="272.0" prefHeight="27.0" prefWidth="149.0" promptText="Change Username" />
+                        <TextField fx:id="changeUserName" layoutX="262.0" layoutY="272.0" onAction="#changeUsernameOnAction" prefHeight="27.0" prefWidth="149.0" promptText="Change Username" />
                         <ImageView fx:id="profileImageView" fitHeight="265.0" fitWidth="270.0" layoutX="587.0" layoutY="153.0" pickOnBounds="true" preserveRatio="true" />
                         <Text fx:id="changeAvatarText" fill="WHITE" layoutX="683.0" layoutY="451.0" onMouseClicked="#handleChangeAvatar" strokeType="OUTSIDE" strokeWidth="0.0" text="Change Avatar" />
                         <Text fx:id="deleteAccount" fill="#eb0202" layoutX="296.0" layoutY="322.0" onMouseClicked="#deleteUserAccount" strokeType="OUTSIDE" strokeWidth="0.0" text="Delete Account" />
