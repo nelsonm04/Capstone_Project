@@ -45,6 +45,9 @@ public class MainScreen implements Initializable {
     private EventData lastDeletedEvent;
     private LocalDate lastDeletedDate;
 
+    private Map<LocalDate, String> holidayMap = new HashMap<>();
+
+
     @FXML
     private Label weatherLabel;
 
@@ -90,6 +93,11 @@ public class MainScreen implements Initializable {
             profilePicture.setClip(sidebarClip);
 
         }
+        new Thread(() -> {
+            holidayMap = HolidayAPI.fetchUSHolidays(currentYear);
+            Platform.runLater(this::updateCalendar);
+        }).start();
+
     }
     private void openAddEventDialog() {
         Dialog<EventDataWithDate> dialog = new Dialog<>();
@@ -262,9 +270,20 @@ public class MainScreen implements Initializable {
 
             if (date != null) {
                 Label dateLabel = new Label(String.valueOf(date.getDayOfMonth()));
+
+
                 VBox vbox = new VBox(dateLabel);
                 vbox.setSpacing(5);
                 vbox.setMouseTransparent(false);
+
+                if (holidayMap != null && holidayMap.containsKey(date)) {
+                    dateLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+
+                    Label holidayLabel = new Label(holidayMap.get(date));
+                    holidayLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: white;");
+                    holidayLabel.setWrapText(true);
+                    vbox.getChildren().add(holidayLabel);
+                }
                 cell.getChildren().add(vbox);
 
                 cell.setOnMouseClicked(e -> showEventDialog(date, cell));
@@ -277,9 +296,9 @@ public class MainScreen implements Initializable {
                 row++;
             }
         }
-
         loadEventsFromFirestore(year, month);
     }
+
 
     private void loadEventsFromFirestore(int year, int month) {
         Firestore db = CapstoneApplication.fstore;
