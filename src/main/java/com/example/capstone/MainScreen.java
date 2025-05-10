@@ -93,10 +93,10 @@ public class MainScreen implements Initializable {
             profilePicture.setClip(sidebarClip);
 
         }
-        new Thread(() -> {
-            holidayMap = HolidayAPI.fetchUSHolidays(currentYear);
-            Platform.runLater(this::updateCalendar);
-        }).start();
+//        new Thread(() -> {
+//            holidayMap = HolidayAPI.fetchUSHolidays(currentYear);
+//            Platform.runLater(this::updateCalendar);
+//        }).start();
 
     }
     private void openAddEventDialog() {
@@ -192,16 +192,18 @@ public class MainScreen implements Initializable {
         }
     }
 
-
-
-
     private void handleScreenSwitch(String screenName) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/capstone/" + screenName + ".fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) mainButton.getScene().getWindow();
-            Scene scene = new Scene(root);
 
+            boolean isMaximized = stage.isMaximized();
+            boolean isFullScreen = stage.isFullScreen();
+            double width = stage.getWidth();
+            double height = stage.getHeight();
+
+            Scene scene = new Scene(root);
             scene.getStylesheets().clear();
 
             if (screenName.equals("MainScreen")) {
@@ -209,13 +211,19 @@ public class MainScreen implements Initializable {
             }
             scene.getStylesheets().add(getClass().getResource("/Styles/planet.css").toExternalForm());
 
-
             stage.setScene(scene);
+
+            stage.setWidth(width);
+            stage.setHeight(height);
+            stage.setMaximized(isMaximized);
+            stage.setFullScreen(isFullScreen);
+
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     private void updateCalendar() {
         loadCalendar(currentYear, currentMonth);
@@ -288,7 +296,6 @@ public class MainScreen implements Initializable {
 
                 cell.setOnMouseClicked(e -> showEventDialog(date, cell));
             }
-
             calendarGrid.add(cell, col, row);
             col++;
             if (col == 7) {
@@ -425,6 +432,7 @@ public class MainScreen implements Initializable {
 
         dialog.setResultConverter(dialogButton -> dialogButton);
 
+
         dialog.showAndWait().ifPresent(result -> {
             if (result == saveButtonType) {
                 if (!nameField.getText().isEmpty() && !timeField.getText().isEmpty()) {
@@ -531,6 +539,8 @@ public class MainScreen implements Initializable {
         ButtonType undoButton = new ButtonType("Undo");
         ButtonType closeButton = new ButtonType("Dismiss", ButtonBar.ButtonData.CANCEL_CLOSE);
         alert.getButtonTypes().setAll(undoButton, closeButton);
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(getClass().getResource("/Styles/planet.css").toExternalForm());
 
         alert.showAndWait().ifPresent(response -> {
             if (response == undoButton && lastDeletedEvent != null && lastDeletedDate != null) {
@@ -546,6 +556,7 @@ public class MainScreen implements Initializable {
 
     private void showEventDialog(LocalDate date, StackPane cell) {
         Dialog<EventData> dialog = new Dialog<>();
+
         dialog.setTitle("New Event for " + date.toString());
 
         Label nameLabel = new Label("Event:");

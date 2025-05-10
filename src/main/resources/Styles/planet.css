@@ -1,10 +1,16 @@
 /*Global Stylesheet for button and label as of rn just wanted to test*/
-
 .button {
-    -fx-background-color: #3c8dbc;
+    -fx-background-color: #301934;
     -fx-text-fill: white;
     -fx-font-size: 16px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 5, 0, 0, 2);
 }
+
+.button:hover {
+    -fx-background-color: #512E5F; /* lighter purple on hover */
+}
+
 
 .label {
     -fx-font-size: 18px;
@@ -46,20 +52,29 @@
     -fx-pref-width: 200px;
 }
 
-/* Buttons */
-.button {
-    -fx-background-color: #035E7B;
-    -fx-text-fill: white;
-    -fx-background-radius: 10px;
-    -fx-padding: 6px 20px;
-    -fx-font-size: 14px;
-}
-
-.button:hover {
-    -fx-background-color: #047d9f;
-}
-
 /* ImageView (Logo) */
 .image-view {
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 15, 0.3, 0, 2);
+}
+
+.dialog-pane {
+    -fx-background-color: #2b2b2b;
+}
+
+.dialog-pane .content.label {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: #3c3c3c;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.dialog-pane .button {
+    -fx-background-color: #301934;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
 }

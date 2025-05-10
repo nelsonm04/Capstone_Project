@@ -108,26 +108,38 @@ public class  SettingsController implements Initializable {
 
     }
 
-
     private void handleScreenSwitch(String screenName) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(screenName + ".fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/capstone/" + screenName + ".fxml"));
             Parent root = loader.load();
-
             Stage stage = (Stage) mainButton.getScene().getWindow();
+
+            boolean isMaximized = stage.isMaximized();
+            boolean isFullScreen = stage.isFullScreen();
+            double width = stage.getWidth();
+            double height = stage.getHeight();
+
             Scene scene = new Scene(root);
+            scene.getStylesheets().clear();
+
             if (screenName.equals("MainScreen")) {
                 scene.getStylesheets().add(getClass().getResource("/Styles/mainscreen.css").toExternalForm());
             }
-
-            scene.getStylesheets().add(getClass().getResource("/styles/planet.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("/Styles/planet.css").toExternalForm());
 
             stage.setScene(scene);
+
+            stage.setWidth(width);
+            stage.setHeight(height);
+            stage.setMaximized(isMaximized);
+            stage.setFullScreen(isFullScreen);
+
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     private void loadProfilePicture() {
         try {
@@ -261,6 +273,8 @@ public class  SettingsController implements Initializable {
         alert.setTitle("Username Change");
         alert.setHeaderText(null);
         alert.setContentText(message);
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(getClass().getResource("/Styles/planet.css").toExternalForm());
         alert.showAndWait();
     }
 
