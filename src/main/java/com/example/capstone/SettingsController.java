@@ -90,7 +90,6 @@ public class  SettingsController implements Initializable {
             profilePicture.setImage(sessionImage);
             profileImageView.setImage(sessionImage);
 
-            // 🔥 Clip both to circles
             Circle sidebarClip = new Circle(40, 40, 40); // sidebar
             profilePicture.setClip(sidebarClip);
 
@@ -98,7 +97,6 @@ public class  SettingsController implements Initializable {
             profileImageView.setClip(centerClip);
         }
 
-        // Setup clicking "Change Avatar"
         changeAvatarText.setOnMouseClicked(this::handleChangeAvatar);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
@@ -174,10 +172,8 @@ public class  SettingsController implements Initializable {
             profilePicture.setImage(newImage);
             profileImageView.setImage(newImage);
 
-            // Save to session
             Session.setProfilePicture(newImage);
 
-            // Re-clip
             Circle sidebarClip = new Circle(40, 40, 40);
             profilePicture.setClip(sidebarClip);
 
@@ -201,6 +197,7 @@ public class  SettingsController implements Initializable {
         alert.setHeaderText("Are you sure you want to delete your account?");
         alert.setContentText("This action cannot be undone.");
 
+
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             String uid = currentUser.getUid();
@@ -220,7 +217,7 @@ public class  SettingsController implements Initializable {
                 Platform.runLater(() -> showAlert(Alert.AlertType.ERROR, "Auth deletion failed."));
             }
 
-            }, Runnable::run); // Executes on JavaFX thread
+            }, Runnable::run);
 
         }
     }

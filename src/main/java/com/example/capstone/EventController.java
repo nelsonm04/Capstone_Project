@@ -93,6 +93,13 @@ public class EventController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/capstone/" + screenName + ".fxml"));
             Parent root = loader.load();
+
+            if ("socialScreen".equals(screenName)) {
+                SocialController sc = loader.getController();
+                sc.loadAllUsers();
+                sc.loadFriends();
+                sc.loadPendingRequests();
+            }
             Stage stage = (Stage) mainButton.getScene().getWindow();
 
             boolean isMaximized = stage.isMaximized();
@@ -166,7 +173,6 @@ public class EventController implements Initializable {
                 LocalDate baseDate = LocalDate.parse(dateStr);
                 LocalDate repeatEnd = repeatEndStr != null ? LocalDate.parse(repeatEndStr) : windowEnd;
 
-                // Add base event if it's within range
                 if (!baseDate.isBefore(today) && !baseDate.isAfter(windowEnd)) {
                     events.add(new EventData(title, time, baseDate));
                 }
@@ -220,7 +226,6 @@ public class EventController implements Initializable {
                 }
             }
 
-            // Add any leftover group
             if (!currentGroup.getChildren().isEmpty()) {
                 eventListVBox.getChildren().add(currentGroup);
             }
@@ -270,7 +275,6 @@ public class EventController implements Initializable {
                 pastEventGroup.getChildren().add(eventBox);
             }
 
-            // Now add to the UI
             rightPanelVBox.getChildren().clear();
             Label header = new Label("📅 Past Events");
             header.setStyle("-fx-font-size: 18px; -fx-text-fill: white;");

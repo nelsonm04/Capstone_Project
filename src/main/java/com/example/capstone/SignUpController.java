@@ -78,13 +78,11 @@ public class SignUpController {
                     .setDisabled(false);
 
             UserRecord userRecord = CapstoneApplication.fauth.createUser(request);
-            showAlert("Success", "Account created successfully: " + userRecord.getUid());
+            showAlert("Success", "Account created successfully: ");
 
-            // Create User object and save to Firestore
             User newUser = new User(userRecord.getUid(), email, username);
             saveUserToDatabase(newUser);
 
-            // (Optional) Redirect back to SignIn screen automatically after signup
             CapstoneApplication.setRoot("SignIn");
 
         } catch (FirebaseAuthException e) {

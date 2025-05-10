@@ -17,7 +17,6 @@ public class User {
         this.createdAt = System.currentTimeMillis();
     }
 
-    // Getter methods (optional, but useful)
     public String getUid() {
         return uid;
     }
@@ -34,7 +33,6 @@ public class User {
         return createdAt;
     }
 
-    // Create a map to save to Firestore
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("uid", uid);

@@ -2,16 +2,15 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
 <BorderPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.capstone.SocialController">
 
@@ -47,165 +46,26 @@
 
     <!-- Main Calendar Area -->
     <center>
-        <VBox alignment="TOP_CENTER" spacing="10">
-            <padding>
-                <Insets bottom="20" left="20" right="20" top="20" />
-            </padding>
-            <children>
-                <AnchorPane prefHeight="692.0" prefWidth="1040.0">
-                    <children>
-                        <VBox layoutX="22.0" layoutY="152.0" prefHeight="444.0" prefWidth="474.0">
-                            <children>
-                                <HBox prefHeight="66.0" prefWidth="467.0">
-                                    <children>
-                                        <VBox prefHeight="66.0" prefWidth="79.0">
-                                            <children>
-                                                <ImageView fitHeight="65.0" fitWidth="78.0" pickOnBounds="true" preserveRatio="true" />
-                                            </children>
-                                        </VBox>
-                                        <HBox prefHeight="66.0" prefWidth="500.0">
-                                            <children>
-                                                <Label text="Username" />
-                                                <Button ellipsisString="" mnemonicParsing="false" text="Calendar" />
-                                                <Button ellipsisString="" mnemonicParsing="false" text="Message" />
-                                                <Button ellipsisString="" mnemonicParsing="false" text="Unfriend" />
-                                            </children>
-                                        </HBox>
-                                    </children>
-                                </HBox>
-                        <HBox prefHeight="66.0" prefWidth="467.0">
-                           <children>
-                              <VBox prefHeight="66.0" prefWidth="79.0">
-                                 <children>
-                                    <ImageView fitHeight="65.0" fitWidth="78.0" pickOnBounds="true" preserveRatio="true" />
-                                 </children>
-                              </VBox>
-                              <HBox prefHeight="66.0" prefWidth="500.0">
-                                 <children>
-                                    <Label text="Username" />
-                                    <Button ellipsisString="" mnemonicParsing="false" text="Calendar" />
-                                    <Button ellipsisString="" mnemonicParsing="false" text="Message" />
-                                    <Button ellipsisString="" mnemonicParsing="false" text="Unfriend" />
-                                 </children>
-                              </HBox>
-                           </children>
-                        </HBox>
-                        <HBox prefHeight="66.0" prefWidth="467.0">
-                           <children>
-                              <VBox prefHeight="66.0" prefWidth="79.0">
-                                 <children>
-                                    <ImageView fitHeight="65.0" fitWidth="78.0" pickOnBounds="true" preserveRatio="true" />
-                                 </children>
-                              </VBox>
-                              <HBox prefHeight="66.0" prefWidth="500.0">
-                                 <children>
-                                    <Label text="Username" />
-                                    <Button ellipsisString="" mnemonicParsing="false" text="Calendar" />
-                                    <Button ellipsisString="" mnemonicParsing="false" text="Message" />
-                                    <Button ellipsisString="" mnemonicParsing="false" text="Unfriend" />
-                                 </children>
-                              </HBox>
-                           </children>
-                        </HBox>
-                        <HBox prefHeight="66.0" prefWidth="467.0">
-                           <children>
-                              <VBox prefHeight="66.0" prefWidth="79.0">
-                                 <children>
-                                    <ImageView fitHeight="65.0" fitWidth="78.0" pickOnBounds="true" preserveRatio="true" />
-                                 </children>
-                              </VBox>
-                              <HBox prefHeight="66.0" prefWidth="390.0">
-                                 <children>
-                                    <Label text="Username" />
-                                    <Button ellipsisString="" mnemonicParsing="false" text="Calendar" />
-                                    <Button ellipsisString="" mnemonicParsing="false" text="Message" />
-                                    <Button ellipsisString="" mnemonicParsing="false" text="Unfriend" />
-                                 </children>
-                              </HBox>
-                           </children>
-                        </HBox>
-                            </children>
-                        </VBox>
-                        <VBox layoutX="543.0" layoutY="152.0" prefHeight="450.0" prefWidth="483.0">
-                            <children>
-                        <HBox prefHeight="66.0" prefWidth="467.0">
-                           <children>
-                              <VBox prefHeight="66.0" prefWidth="79.0">
-                                 <children>
-                                    <ImageView fitHeight="65.0" fitWidth="78.0" pickOnBounds="true" preserveRatio="true" />
-                                 </children>
-                              </VBox>
-                              <HBox prefHeight="66.0" prefWidth="500.0">
-                                 <children>
-                                    <Label text="Username" />
-                                    <Button ellipsisString="" mnemonicParsing="false" text="Calendar" />
-                                    <Button ellipsisString="" mnemonicParsing="false" text="Message" />
-                                    <Button ellipsisString="" mnemonicParsing="false" text="Unfriend" />
-                                 </children>
-                              </HBox>
-                           </children>
-                        </HBox>
-                        <HBox prefHeight="66.0" prefWidth="467.0">
-                           <children>
-                              <VBox prefHeight="66.0" prefWidth="79.0">
-                                 <children>
-                                    <ImageView fitHeight="65.0" fitWidth="78.0" pickOnBounds="true" preserveRatio="true" />
-                                 </children>
-                              </VBox>
-                              <HBox prefHeight="66.0" prefWidth="500.0">
-                                 <children>
-                                    <Label text="Username" />
-                                    <Button ellipsisString="" mnemonicParsing="false" text="Calendar" />
-                                    <Button ellipsisString="" mnemonicParsing="false" text="Message" />
-                                    <Button ellipsisString="" mnemonicParsing="false" text="Unfriend" />
-                                 </children>
-                              </HBox>
-                           </children>
-                        </HBox>
-                        <HBox prefHeight="66.0" prefWidth="467.0">
-                           <children>
-                              <VBox prefHeight="66.0" prefWidth="79.0">
-                                 <children>
-                                    <ImageView fitHeight="65.0" fitWidth="78.0" pickOnBounds="true" preserveRatio="true" />
-                                 </children>
-                              </VBox>
-                              <HBox prefHeight="66.0" prefWidth="500.0">
-                                 <children>
-                                    <Label text="Username" />
-                                    <Button ellipsisString="" mnemonicParsing="false" text="Calendar" />
-                                    <Button ellipsisString="" mnemonicParsing="false" text="Message" />
-                                    <Button ellipsisString="" mnemonicParsing="false" text="Unfriend" />
-                                 </children>
-                              </HBox>
-                           </children>
-                        </HBox>
-                        <HBox prefHeight="66.0" prefWidth="467.0">
-                           <children>
-                              <VBox prefHeight="66.0" prefWidth="79.0">
-                                 <children>
-                                    <ImageView fitHeight="65.0" fitWidth="78.0" pickOnBounds="true" preserveRatio="true" />
-                                 </children>
-                              </VBox>
-                              <HBox prefHeight="66.0" prefWidth="500.0">
-                                 <children>
-                                    <Label text="Username" />
-                                    <Button ellipsisString="" mnemonicParsing="false" text="Calendar" />
-                                    <Button ellipsisString="" mnemonicParsing="false" text="Message" />
-                                    <Button ellipsisString="" mnemonicParsing="false" text="Unfriend" />
-                                 </children>
-                              </HBox>
-                           </children>
-                        </HBox>
-                            </children>
-                        </VBox>
-                  <Text fill="WHITE" layoutX="446.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Friends List">
-                     <font>
-                        <Font name="Arial Black" size="23.0" />
-                     </font>
-                  </Text>
-                    </children>
-                </AnchorPane>
-            </children>
+        <VBox alignment="TOP_CENTER" spacing="20">
+            <padding><Insets bottom="20" left="20" right="20" top="20" /></padding>
+
+            <HBox spacing="8">
+                <Label style="-fx-text-fill:white;" text="Add Friend:" />
+                <ComboBox fx:id="userDropdown" prefWidth="200" />
+                <Button fx:id="sendRequestButton" text="Send" />
+            </HBox>
+
+            <HBox spacing="40">
+                <VBox spacing="10">
+                    <Label style="-fx-font-size:20px; -fx-text-fill:white;" text="Friends List" />
+                    <ListView fx:id="friendsListView" prefHeight="300" prefWidth="300" />
+                </VBox>
+            <VBox prefHeight="340.0" prefWidth="310.0" />
+                <VBox fx:id="pendingRequestsVBox" spacing="10">
+                    <Label style="-fx-font-size:20px; -fx-text-fill:white;" text="Pending Requests" />
+                </VBox>
+            </HBox>
+
         </VBox>
     </center>
 
