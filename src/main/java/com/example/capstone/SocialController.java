@@ -1,99 +1,27 @@
 package com.example.capstone;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.shape.Circle;
-import javafx.stage.Stage;
+import javafx.scene.control.ListView;
 
-import java.io.IOException;
-import java.net.URL;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ResourceBundle;
-
-public class SocialController implements Initializable {
+public class SocialController {
 
     @FXML
-    private GridPane calendarGrid;
-    @FXML
-    private Button addEventButton, mainButton, settingButton, socialButton, eventButton;
-    @FXML
-    private Label monthYear;
+    private ListView<String> friendsListView;
 
     @FXML
-    private Label usernameDisplay;
+    private Button addFriendButton;
 
     @FXML
-    private Label weatherLabel;
+    public void initialize() {
+        // Example data
+        friendsListView.getItems().addAll("Alice", "Bob", "Charlie");
 
-    @FXML
-    private ImageView profilePicture;
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-
-
-        // Switches the screen when clicked on
-        mainButton.setOnAction(e -> handleScreenSwitch("MainScreen"));
-        settingButton.setOnAction(e -> handleScreenSwitch("settingScreen"));
-        socialButton.setOnAction(e -> handleScreenSwitch("socialScreen"));
-        eventButton.setOnAction(e -> handleScreenSwitch("eventScreen"));
-
-        if (Session.getUsername() != null) {
-            usernameDisplay.setText(Session.getUsername());
-        }
-
-        if (Session.getProfilePicture() != null) {
-            Image sessionImage = Session.getProfilePicture();
-
-            profilePicture.setImage(sessionImage);
-
-            Circle sidebarClip = new Circle(40, 40, 40); // sidebar
-            profilePicture.setClip(sidebarClip);
-        }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        monthYear.setText(LocalDate.now().format(formatter));
+        // Handle adding friends
+        addFriendButton.setOnAction(event -> addFriend("New Friend"));
     }
 
-    private void handleScreenSwitch(String screenName) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/capstone/" + screenName + ".fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) mainButton.getScene().getWindow();
-
-            boolean isMaximized = stage.isMaximized();
-            boolean isFullScreen = stage.isFullScreen();
-            double width = stage.getWidth();
-            double height = stage.getHeight();
-
-            Scene scene = new Scene(root);
-            scene.getStylesheets().clear();
-
-            if (screenName.equals("MainScreen")) {
-                scene.getStylesheets().add(getClass().getResource("/Styles/mainscreen.css").toExternalForm());
-            }
-            scene.getStylesheets().add(getClass().getResource("/Styles/planet.css").toExternalForm());
-
-            stage.setScene(scene);
-
-            stage.setWidth(width);
-            stage.setHeight(height);
-            stage.setMaximized(isMaximized);
-            stage.setFullScreen(isFullScreen);
-
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void addFriend(String friendName) {
+        friendsListView.getItems().add(friendName);
     }
-
-
 }
