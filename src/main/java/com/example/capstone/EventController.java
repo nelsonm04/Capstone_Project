@@ -21,6 +21,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -45,7 +46,7 @@ public class EventController implements Initializable {
     private Button socialButton;
 
     @FXML
-    private Label usernameDisplay;
+    private Label usernameDisplay, forecastLabel;
 
     @FXML
     private Label weatherLabel;
@@ -54,7 +55,7 @@ public class EventController implements Initializable {
     private ImageView profilePicture;
 
     @FXML
-    private VBox eventListVBox;
+    private VBox eventListVBox,rightPanelVBox;
 
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -84,6 +85,7 @@ public class EventController implements Initializable {
 
 
         loadUpcomingEvents();
+        loadArchivedEvents();
 
     }
 
@@ -131,12 +133,11 @@ public class EventController implements Initializable {
             this.date = date;
         }
     }
-
     private void loadUpcomingEvents() {
         Firestore db = CapstoneApplication.fstore;
         String uid = Session.getUid();
 
-        eventListVBox.getChildren().clear(); // Clear any old ones first
+        eventListVBox.getChildren().removeIf(node -> node instanceof HBox);
 
         try {
             var future = db.collection("users")
@@ -149,26 +150,56 @@ public class EventController implements Initializable {
             var querySnapshot = future.get();
 
             List<EventData> events = new ArrayList<>();
+
+            LocalDate today = LocalDate.now();
+            LocalDate windowEnd = today.plusWeeks(4); // Limit range of generated events
+
             for (var doc : querySnapshot.getDocuments()) {
                 String title = doc.getString("title");
                 String time = doc.getString("time");
                 String dateStr = doc.getString("date");
+                String repeat = doc.contains("repeat") ? doc.getString("repeat") : "None";
+                String repeatEndStr = doc.contains("repeatEnd") ? doc.getString("repeatEnd") : null;
 
-                if (title != null && time != null && dateStr != null) {
-                    events.add(new EventData(title, time, LocalDate.parse(dateStr)));
+                if (title == null || time == null || dateStr == null) continue;
+
+                LocalDate baseDate = LocalDate.parse(dateStr);
+                LocalDate repeatEnd = repeatEndStr != null ? LocalDate.parse(repeatEndStr) : windowEnd;
+
+                // Add base event if it's within range
+                if (!baseDate.isBefore(today) && !baseDate.isAfter(windowEnd)) {
+                    events.add(new EventData(title, time, baseDate));
+                }
+
+                // Expand recurring events
+                if (!repeat.equalsIgnoreCase("None")) {
+                    LocalDate next = baseDate;
+                    while ((next = getNextOccurrence(next, repeat)) != null && !next.isAfter(repeatEnd)) {
+                        if (!next.isBefore(today) && !next.isAfter(windowEnd)) {
+                            events.add(new EventData(title, time, next));
+                        }
+                    }
                 }
             }
 
-            // Now display the sorted list
+            // Sort by date and time
+            events.sort(Comparator.comparing(e -> e.date));
+
+            // Group into VBoxes of 5
+            int groupSize = 5;
+            VBox currentGroup = new VBox(10);
+            currentGroup.setStyle("-fx-padding: 10;");
+            int count = 0;
+
             for (EventData event : events) {
                 HBox eventBox = new HBox(10);
                 eventBox.setStyle("-fx-padding: 10; -fx-background-color: #2a2a2a; -fx-background-radius: 8;");
+                eventBox.setMinHeight(40);
 
                 Label dateLabel = new Label(event.date.format(DateTimeFormatter.ofPattern("MMM dd, yyyy")));
                 Label timeLabel = new Label(event.time);
                 Label titleLabel = new Label(event.title);
 
-                // Optional: Set min widths for consistent alignment
                 dateLabel.setMinWidth(120);
                 timeLabel.setMinWidth(80);
                 titleLabel.setMinWidth(200);
@@ -178,14 +209,86 @@ public class EventController implements Initializable {
                 }
 
                 eventBox.getChildren().addAll(dateLabel, timeLabel, titleLabel);
-                eventListVBox.getChildren().add(eventBox);
+                currentGroup.getChildren().add(eventBox);
+                count++;
+
+                if (count == groupSize) {
+                    eventListVBox.getChildren().add(currentGroup);
+                    currentGroup = new VBox(10);
+                    currentGroup.setStyle("-fx-padding: 10;");
+                    count = 0;
+                }
             }
 
+            // Add any leftover group
+            if (!currentGroup.getChildren().isEmpty()) {
+                eventListVBox.getChildren().add(currentGroup);
+            }
 
         } catch (Exception e) {
             System.out.println("Failed to load events: " + e.getMessage());
         }
+    }
 
+    private void loadArchivedEvents() {
+        Firestore db = CapstoneApplication.fstore;
+        String uid = Session.getUid();
+
+        VBox pastEventGroup = new VBox(10);
+        pastEventGroup.setStyle("-fx-padding: 10;");
+
+        try {
+            var future = db.collection("users")
+                    .document(uid)
+                    .collection("archived_events")
+                    .orderBy("date", com.google.cloud.firestore.Query.Direction.DESCENDING)
+                    .get();
+
+            var querySnapshot = future.get();
+
+            for (var doc : querySnapshot.getDocuments()) {
+                String title = doc.getString("title");
+                String time = doc.getString("time");
+                String dateStr = doc.getString("date");
+
+                if (title == null || time == null || dateStr == null) continue;
+
+                LocalDate date = LocalDate.parse(dateStr);
+
+                HBox eventBox = new HBox(10);
+                eventBox.setStyle("-fx-padding: 10; -fx-background-color: #333; -fx-background-radius: 8;");
+
+                Label dateLabel = new Label(date.format(DateTimeFormatter.ofPattern("MMM dd, yyyy")));
+                Label timeLabel = new Label(time);
+                Label titleLabel = new Label(title);
+
+                for (Label label : List.of(dateLabel, timeLabel, titleLabel)) {
+                    label.setStyle("-fx-font-size: 14px; -fx-text-fill: #ccc;");
+                }
+
+                eventBox.getChildren().addAll(dateLabel, timeLabel, titleLabel);
+                pastEventGroup.getChildren().add(eventBox);
+            }
+
+            // Now add to the UI
+            rightPanelVBox.getChildren().clear();
+            Label header = new Label("📅 Past Events");
+            header.setStyle("-fx-font-size: 18px; -fx-text-fill: white;");
+            rightPanelVBox.getChildren().addAll(header, pastEventGroup);
+
+        } catch (Exception e) {
+            System.out.println("Failed to load archived events: " + e.getMessage());
+        }
+    }
+
+    private LocalDate getNextOccurrence(LocalDate current, String repeatType) {
+        return switch (repeatType.toUpperCase()) {
+            case "DAILY" -> current.plusDays(1);
+            case "WEEKLY" -> current.plusWeeks(1);
+            case "MONTHLY" -> current.plusMonths(1);
+            case "YEARLY" -> current.plusYears(1);
+            default -> null;
+        };
     }
 
 

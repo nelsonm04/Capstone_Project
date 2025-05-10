@@ -78,3 +78,8 @@
     -fx-text-fill: white;
     -fx-font-size: 13px;
 }
+
+.custom-alert {
+    -fx-background-color: #1f1f1f;
+}
+

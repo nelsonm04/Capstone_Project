@@ -11,9 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
@@ -103,24 +101,21 @@ public class MainScreen implements Initializable {
         Dialog<EventDataWithDate> dialog = new Dialog<>();
         dialog.setTitle("New Event");
 
+        // Form fields
         Label nameLabel = new Label("Event:");
         TextField nameField = new TextField();
 
         Label timeLabel = new Label("Time:");
         TextField timeField = new TextField();
         timeField.setPromptText("e.g. 2:30 PM");
-        timeField.textProperty().addListener((obs, oldText, newText) -> {
-            if (newText.isEmpty()) {
-                return;
-            }
-            String cleaned = newText.replaceAll("[^0-9APMapm:]", "").toUpperCase();
 
-            // If user typed 2 digits and no colon yet, auto-insert colon
+        // Time formatting logic
+        timeField.textProperty().addListener((obs, oldText, newText) -> {
+            if (newText.isEmpty()) return;
+            String cleaned = newText.replaceAll("[^0-9APMapm:]", "").toUpperCase();
             if (cleaned.length() == 2 && !cleaned.contains(":")) {
                 cleaned = cleaned.substring(0, 2) + ":";
             }
-
-            // Only allow 0-9, :, A, P, M
             if (!cleaned.matches("[0-9:APM]*")) {
                 timeField.setText(oldText);
             } else {
@@ -128,11 +123,19 @@ public class MainScreen implements Initializable {
             }
         });
 
-
         Label dateLabel = new Label("Date:");
-        DatePicker datePicker = new DatePicker();
-        datePicker.setValue(LocalDate.now()); // Default to today
+        DatePicker datePicker = new DatePicker(LocalDate.now());
 
+        Label repeatLabel = new Label("Repeat:");
+        ComboBox<String> repeatBox = new ComboBox<>();
+        repeatBox.getItems().addAll("None", "Daily", "Weekly", "Monthly", "Yearly");
+        repeatBox.setValue("None");
+
+        Label endDateLabel = new Label("Repeat Ends:");
+        DatePicker endDatePicker = new DatePicker();
+        endDatePicker.setPromptText("Optional");
+
+        // Grid layout
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -142,8 +145,13 @@ public class MainScreen implements Initializable {
         grid.add(timeField, 1, 1);
         grid.add(dateLabel, 0, 2);
         grid.add(datePicker, 1, 2);
+        grid.add(repeatLabel, 0, 3);
+        grid.add(repeatBox, 1, 3);
+        grid.add(endDateLabel, 0, 4);
+        grid.add(endDatePicker, 1, 4);
 
         dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getStylesheets().add(getClass().getResource("/Styles/planet.css").toExternalForm());
 
         ButtonType addButtonType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(addButtonType, ButtonType.CANCEL);
@@ -153,7 +161,9 @@ public class MainScreen implements Initializable {
                 return new EventDataWithDate(
                         nameField.getText(),
                         timeField.getText(),
-                        datePicker.getValue()
+                        datePicker.getValue(),
+                        repeatBox.getValue(),
+                        endDatePicker.getValue() // ⬅ new field
                 );
             }
             return null;
@@ -171,24 +181,27 @@ public class MainScreen implements Initializable {
 
                 String timeToSave = timeInput.isEmpty() ? "N/A" : timeInput;
 
-                saveEventToFirestore(eventData.name, timeToSave, eventData.date);
+                // ✅ Save including repeat and end date
+                saveEventToFirestore(eventData.name, timeToSave, eventData.date, eventData.repeat, eventData.endDate);
                 updateCalendar();
             }
         });
-
-
-
-
     }
+
+
     private static class EventDataWithDate {
         String name;
         String time;
         LocalDate date;
+        String repeat;
+        LocalDate endDate;
 
-        EventDataWithDate(String name, String time, LocalDate date) {
+        EventDataWithDate(String name, String time, LocalDate date, String repeat,LocalDate endDate) {
             this.name = name;
             this.time = time;
             this.date = date;
+            this.repeat = repeat;
+            this.endDate = endDate;
         }
     }
 
@@ -223,7 +236,6 @@ public class MainScreen implements Initializable {
             e.printStackTrace();
         }
     }
-
 
     private void updateCalendar() {
         loadCalendar(currentYear, currentMonth);
@@ -262,6 +274,23 @@ public class MainScreen implements Initializable {
     public void loadCalendar(int year, int month) {
         calendarGrid.getChildren().clear();
 
+        calendarGrid.getColumnConstraints().clear();
+        calendarGrid.getRowConstraints().clear();
+
+        for (int i = 0; i < 7; i++) {
+            ColumnConstraints col = new ColumnConstraints();
+            col.setPercentWidth(100.0 / 7);
+            col.setHgrow(Priority.ALWAYS);
+            calendarGrid.getColumnConstraints().add(col);
+        }
+
+        for (int i = 0; i < 6; i++) {
+            RowConstraints row = new RowConstraints();
+            row.setPercentHeight(100.0 / 6);
+            row.setVgrow(Priority.ALWAYS);
+            calendarGrid.getRowConstraints().add(row);
+        }
+
         List<LocalDate> dates = CalendarUtils.getMonthDates(year, month);
         String[] dayNames = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         for (int i = 0; i < 7; i++) {
@@ -274,7 +303,11 @@ public class MainScreen implements Initializable {
 
         for (LocalDate date : dates) {
             StackPane cell = new StackPane();
-            cell.setPrefSize(100, 100);
+            cell.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+            GridPane.setHgrow(cell, Priority.ALWAYS);
+            GridPane.setVgrow(cell, Priority.ALWAYS);
+            cell.setStyle("-fx-border-color: #888; -fx-border-width: 1px; -fx-border-style: solid;");
+
 
             if (date != null) {
                 Label dateLabel = new Label(String.valueOf(date.getDayOfMonth()));
@@ -306,12 +339,12 @@ public class MainScreen implements Initializable {
         loadEventsFromFirestore(year, month);
     }
 
-
     private void loadEventsFromFirestore(int year, int month) {
         Firestore db = CapstoneApplication.fstore;
         String uid = Session.getUid();
         LocalDate firstDay = LocalDate.of(year, month, 1);
         LocalDate lastDay = firstDay.withDayOfMonth(firstDay.lengthOfMonth());
+        LocalDate today = LocalDate.now();
 
         try {
             var future = db.collection("users")
@@ -327,15 +360,68 @@ public class MainScreen implements Initializable {
                 String title = doc.getString("title");
                 String time = doc.getString("time");
                 String dateStr = doc.getString("date");
+                String repeat = doc.contains("repeat") ? doc.getString("repeat") : "None";
+                String repeatEndStr = doc.contains("repeatEnd") ? doc.getString("repeatEnd") : null;
+
+                if (title == null || time == null || dateStr == null) continue;
 
                 LocalDate eventDate = LocalDate.parse(dateStr);
 
-                Platform.runLater(() -> addEventToCalendarCell(eventDate, time + " - " + title));
+                if (eventDate.isBefore(today) && repeat.equalsIgnoreCase("None")) {
+                    // Archive the document before deleting
+                    Map<String, Object> archivedData = new HashMap<>(doc.getData());
+
+                    db.collection("users")
+                            .document(uid)
+                            .collection("archived_events")
+                            .add(archivedData)
+                            .get(); // Optional: wait for completion
+
+                    doc.getReference().delete();
+                    continue;
+                }
+
+                LocalDate repeatEnd = null;
+                if (repeatEndStr != null && !repeatEndStr.isEmpty()) {
+                    repeatEnd = LocalDate.parse(repeatEndStr);
+                }
+
+                List<LocalDate> allDates = CalendarUtils.getMonthDates(year, month);
+
+                for (LocalDate day : allDates) {
+                    if (day == null) continue;
+
+                    boolean matches = eventDate.equals(day) || isRecurringOnDate(eventDate, repeat, day);
+                    boolean withinRepeatRange = repeatEnd == null || !day.isAfter(repeatEnd);
+
+                    if (matches && withinRepeatRange && !day.isBefore(today)) {
+                        LocalDate finalDay = day;
+                        Platform.runLater(() ->
+                                addEventToCalendarCell(finalDay, time + " - " + title)
+                        );
+                    }
+                }
             }
         } catch (Exception e) {
-            System.out.println("❌ Failed to load events: " + e.getMessage());
+            System.out.println("Failed to load events: " + e.getMessage());
         }
     }
+
+
+
+    private boolean isRecurringOnDate(LocalDate baseDate, String repeatType, LocalDate targetDate) {
+        return switch (repeatType.toUpperCase()) {
+            case "DAILY" -> !targetDate.isBefore(baseDate);
+            case "WEEKLY" -> !targetDate.isBefore(baseDate)
+                    && baseDate.getDayOfWeek() == targetDate.getDayOfWeek();
+            case "MONTHLY" -> !targetDate.isBefore(baseDate)
+                    && baseDate.getDayOfMonth() == targetDate.getDayOfMonth();
+            case "YEARLY" -> baseDate.getDayOfMonth() == targetDate.getDayOfMonth()
+                    && baseDate.getMonth() == targetDate.getMonth();
+            default -> false;
+        };
+    }
+
 
     private void addEventToCalendarCell(LocalDate date, String eventText) {
         for (Node node : calendarGrid.getChildren()) {
@@ -360,15 +446,12 @@ public class MainScreen implements Initializable {
                     // Events Labels
                     String displayText = eventText.startsWith("N/A - ") ? eventText.substring(6) : eventText;
                     Label eventLabel = new Label(displayText);
-                    eventLabel.setStyle("-fx-font-size: 10; -fx-text-fill: white; -fx-cursor: hand;");
+                    eventLabel.setStyle("-fx-font-size: 14; -fx-text-fill: white; -fx-cursor: hand;");
 
                     eventLabel.setOnMouseClicked(e -> {
                         e.consume();
                         showEditOrDeleteDialog(eventText, date);
                     });
-
-
-
                     vbox.getChildren().add(eventLabel);
                     break;
                 }
@@ -422,6 +505,9 @@ public class MainScreen implements Initializable {
         grid.add(timeField, 1, 1);
 
         dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getStylesheets().add(getClass().getResource("/Styles/planet.css").toExternalForm());
+        dialog.getDialogPane().getStyleClass().add("custom-dialog");
+
 
         // Two buttons: Save and Delete
         ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
@@ -467,7 +553,6 @@ public class MainScreen implements Initializable {
         });
 
     }
-
 
     private void updateEventInFirestore(String oldTitle, String oldTime, LocalDate date, String newTitle, String newTime) {
         Firestore db = CapstoneApplication.fstore;
@@ -539,20 +624,27 @@ public class MainScreen implements Initializable {
         ButtonType undoButton = new ButtonType("Undo");
         ButtonType closeButton = new ButtonType("Dismiss", ButtonBar.ButtonData.CANCEL_CLOSE);
         alert.getButtonTypes().setAll(undoButton, closeButton);
+
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.getStylesheets().add(getClass().getResource("/Styles/planet.css").toExternalForm());
 
         alert.showAndWait().ifPresent(response -> {
             if (response == undoButton && lastDeletedEvent != null && lastDeletedDate != null) {
-                saveEventToFirestore(lastDeletedEvent.name, lastDeletedEvent.time, lastDeletedDate);
-                updateCalendar(); // refresh UI
-            }
+                saveEventToFirestore(lastDeletedEvent.name, lastDeletedEvent.time, lastDeletedDate, "None", null);
 
-            // Clear memory
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException ignored) {}
+
+                    Platform.runLater(() -> updateCalendar());
+                }).start();
+            }
             lastDeletedEvent = null;
             lastDeletedDate = null;
         });
     }
+
 
     private void showEventDialog(LocalDate date, StackPane cell) {
         Dialog<EventData> dialog = new Dialog<>();
@@ -595,6 +687,9 @@ public class MainScreen implements Initializable {
         grid.add(timeField, 1, 1);
 
         dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getStylesheets().add(getClass().getResource("/Styles/planet.css").toExternalForm());
+        dialog.getDialogPane().getStyleClass().add("custom-dialog");
+
         ButtonType addButtonType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(addButtonType, ButtonType.CANCEL);
 
@@ -617,16 +712,14 @@ public class MainScreen implements Initializable {
 
                 String timeToSave = timeInput.isEmpty() ? "N/A" : timeInput;
 
-                saveEventToFirestore(eventData.name, timeToSave, date);
+                saveEventToFirestore(eventData.name, timeToSave, date, "None", null);
                 updateCalendar();
             }
         });
 
     }
 
-
-
-    private void saveEventToFirestore(String title, String time, LocalDate date) {
+    private void saveEventToFirestore(String title, String time, LocalDate date, String repeat, LocalDate endDate) {
         Firestore db = CapstoneApplication.fstore;
         String uid = Session.getUid();
 
@@ -634,6 +727,8 @@ public class MainScreen implements Initializable {
         eventData.put("title", title);
         eventData.put("time", time);
         eventData.put("date", date.toString());
+        eventData.put("repeat", repeat);
+        eventData.put("repeatEnd", endDate != null ? endDate.toString() : null);
         eventData.put("createdAt", System.currentTimeMillis());
 
         try {
@@ -648,13 +743,16 @@ public class MainScreen implements Initializable {
         }
     }
 
+
     private static class EventData {
         String name;
         String time;
+        String repeat;
 
         EventData(String name, String time) {
             this.name = name;
             this.time = time;
+            this.repeat = repeat;
         }
     }
 
