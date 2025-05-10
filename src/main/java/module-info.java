@@ -11,6 +11,7 @@ module com.example.capstone {
     requires google.cloud.core;
     requires com.google.api.apicommon;
     requires com.google.gson;
+    requires java.desktop;
 
 
     opens com.example.capstone to javafx.fxml;

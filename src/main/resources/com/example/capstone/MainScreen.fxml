@@ -45,6 +45,9 @@
             <Button fx:id="socialButton" text="Social" />
             <Button fx:id="eventButton" text="Events" />
             <Button fx:id="settingButton" text="Settings" />
+            <Button fx:id="signOutButton" text="Sign Out" onAction="#handleSignOut" />
+
+
         </VBox>
     </left>
 
