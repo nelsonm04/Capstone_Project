@@ -83,3 +83,24 @@
     -fx-background-color: #1f1f1f;
 }
 
+/* planet.css */
+.shooting-star {
+    -fx-fill: white;
+    -fx-opacity: 0.8;
+    -fx-radius: 3;
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255, 0.8), 10, 0.2, 0, 0);
+}
+
+/* Animation for shooting stars */
+@keyframes shoot {
+    0% {
+        -fx-layout-x: 100%;
+        -fx-layout-y: 0%;
+        -fx-opacity: 1;
+    }
+    100% {
+        -fx-layout-x: -100%;
+        -fx-layout-y: 100%;
+        -fx-opacity: 0;
+    }
+}
