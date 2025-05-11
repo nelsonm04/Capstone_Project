@@ -25,6 +25,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
+/**
+ * Controller for the Event screen in the Capstone JavaFX application.
+ * Handles loading and displaying upcoming and archived events,
+ * user navigation, and session-based profile display.
+ */
 public class EventController implements Initializable {
 
     @FXML
@@ -37,7 +42,7 @@ public class EventController implements Initializable {
     private Button mainButton;
 
     @FXML
-    private Label monthYear; // ID on top left
+    private Label monthYear;
 
     @FXML
     private Button settingButton;
@@ -55,11 +60,20 @@ public class EventController implements Initializable {
     private ImageView profilePicture;
 
     @FXML
-    private VBox eventListVBox,rightPanelVBox;
+    private VBox eventListVBox, rightPanelVBox;
 
+    @FXML
+    private Button signOutButton;
 
+    /**
+     * Initializes the controller. Sets up screen navigation buttons,
+     * user profile display, and loads upcoming and archived events.
+     *
+     * @param location  location of the FXML file
+     * @param resources resources used to localize the root object
+     */
+    @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Switches the screen when clicked on
         mainButton.setOnAction(e -> handleScreenSwitch("MainScreen"));
         settingButton.setOnAction(e -> handleScreenSwitch("settingScreen"));
         socialButton.setOnAction(e -> handleScreenSwitch("socialScreen"));
@@ -71,24 +85,24 @@ public class EventController implements Initializable {
 
         if (Session.getProfilePicture() != null) {
             Image sessionImage = Session.getProfilePicture();
-
             profilePicture.setImage(sessionImage);
-
-            Circle sidebarClip = new Circle(40, 40, 40); // sidebar
+            Circle sidebarClip = new Circle(40, 40, 40);
             profilePicture.setClip(sidebarClip);
-
         }
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         monthYear.setText(LocalDate.now().format(formatter));
         monthYear.setStyle("-fx-font-size: 12px; -fx-font-weight: bold;");
 
-
         loadUpcomingEvents();
         loadArchivedEvents();
-
     }
 
+    /**
+     * Switches to the specified screen and preserves current window settings.
+     *
+     * @param screenName the name of the FXML screen to switch to
+     */
     private void handleScreenSwitch(String screenName) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/capstone/" + screenName + ".fxml"));
@@ -100,8 +114,8 @@ public class EventController implements Initializable {
                 sc.loadFriends();
                 sc.loadPendingRequests();
             }
-            Stage stage = (Stage) mainButton.getScene().getWindow();
 
+            Stage stage = (Stage) mainButton.getScene().getWindow();
             boolean isMaximized = stage.isMaximized();
             boolean isFullScreen = stage.isFullScreen();
             double width = stage.getWidth();
@@ -116,30 +130,20 @@ public class EventController implements Initializable {
             scene.getStylesheets().add(getClass().getResource("/Styles/planet.css").toExternalForm());
 
             stage.setScene(scene);
-
             stage.setWidth(width);
             stage.setHeight(height);
             stage.setMaximized(isMaximized);
             stage.setFullScreen(isFullScreen);
-
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-
-    private static class EventData {
-        String title;
-        String time;
-        LocalDate date;
-
-        EventData(String title, String time, LocalDate date) {
-            this.title = title;
-            this.time = time;
-            this.date = date;
-        }
-    }
+    /**
+     * Loads and displays upcoming events, including recurring ones, from Firestore.
+     * Groups them into VBoxes for better display.
+     */
     private void loadUpcomingEvents() {
         Firestore db = CapstoneApplication.fstore;
         String uid = Session.getUid();
@@ -157,9 +161,8 @@ public class EventController implements Initializable {
             var querySnapshot = future.get();
 
             List<EventData> events = new ArrayList<>();
-
             LocalDate today = LocalDate.now();
-            LocalDate windowEnd = today.plusWeeks(4); // Limit range of generated events
+            LocalDate windowEnd = today.plusWeeks(4);
 
             for (var doc : querySnapshot.getDocuments()) {
                 String title = doc.getString("title");
@@ -177,7 +180,6 @@ public class EventController implements Initializable {
                     events.add(new EventData(title, time, baseDate));
                 }
 
-                // Expand recurring events
                 if (!repeat.equalsIgnoreCase("None")) {
                     LocalDate next = baseDate;
                     while ((next = getNextOccurrence(next, repeat)) != null && !next.isAfter(repeatEnd)) {
@@ -188,10 +190,8 @@ public class EventController implements Initializable {
                 }
             }
 
-            // Sort by date and time
             events.sort(Comparator.comparing(e -> e.date));
 
-            // Group into VBoxes of 5
             int groupSize = 5;
             VBox currentGroup = new VBox(10);
             currentGroup.setStyle("-fx-padding: 10;");
@@ -235,8 +235,11 @@ public class EventController implements Initializable {
         }
     }
 
-    @FXML
-    private Button signOutButton;
+    /**
+     * Signs the user out and redirects to the Sign In screen.
+     *
+     * @param actionEvent the event triggered by clicking the Sign Out button
+     */
     public void handleSignOut(javafx.event.ActionEvent actionEvent) {
         Session.clearSession();
         try {
@@ -250,6 +253,9 @@ public class EventController implements Initializable {
         }
     }
 
+    /**
+     * Loads archived (past) events from Firestore and displays them in the right panel.
+     */
     private void loadArchivedEvents() {
         Firestore db = CapstoneApplication.fstore;
         String uid = Session.getUid();
@@ -300,6 +306,13 @@ public class EventController implements Initializable {
         }
     }
 
+    /**
+     * Calculates the next occurrence date of a repeating event.
+     *
+     * @param current    the current date
+     * @param repeatType the repeat interval (e.g. "DAILY", "WEEKLY", etc.)
+     * @return the next date of occurrence, or null if invalid repeat type
+     */
     private LocalDate getNextOccurrence(LocalDate current, String repeatType) {
         return switch (repeatType.toUpperCase()) {
             case "DAILY" -> current.plusDays(1);
@@ -310,5 +323,25 @@ public class EventController implements Initializable {
         };
     }
 
+    /**
+     * Simple model class for storing event data (title, time, and date).
+     */
+    private static class EventData {
+        String title;
+        String time;
+        LocalDate date;
 
+        /**
+         * Constructs a new EventData instance.
+         *
+         * @param title the event title
+         * @param time  the event time
+         * @param date  the event date
+         */
+        EventData(String title, String time, LocalDate date) {
+            this.title = title;
+            this.time = time;
+            this.date = date;
+        }
+    }
 }

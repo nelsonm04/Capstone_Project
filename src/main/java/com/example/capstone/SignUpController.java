@@ -10,6 +10,11 @@ import javafx.scene.control.*;
 
 import java.io.IOException;
 
+/**
+ * The controller for the Sign-Up functionality in the Capstone application.
+ * This class handles user account creation by validating inputs, interacting
+ * with Firebase Authentication, and saving user data to Firestore.
+ */
 public class SignUpController {
 
     @FXML
@@ -30,6 +35,10 @@ public class SignUpController {
     @FXML
     private TextField userUsername;
 
+    /**
+     * Initializes the SignUpController. Adds a listener to the confirm password field
+     * to check if the passwords match.
+     */
     @FXML
     public void initialize() {
         confirmPasswordField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -37,6 +46,10 @@ public class SignUpController {
         });
     }
 
+    /**
+     * Checks if the password and confirm password fields match and updates the
+     * label with the corresponding message.
+     */
     private void checkPasswordMatch() {
         if (signUpPassword.getText().equals(confirmPasswordField.getText())) {
             passwordMatch.setText("Passwords Match");
@@ -47,11 +60,22 @@ public class SignUpController {
         }
     }
 
+    /**
+     * Navigates the user back to the SignIn screen.
+     *
+     * @throws IOException If an error occurs while loading the SignIn screen.
+     */
     @FXML
     private void handleBack() throws IOException {
         CapstoneApplication.setRoot("SignIn");
     }
 
+    /**
+     * Handles the Sign-Up button click event. Validates user input, creates a new user
+     * in Firebase Authentication, and saves user data to Firestore.
+     *
+     * @param event The action event triggered by the button click.
+     */
     @FXML
     void handleSignUp(ActionEvent event) {
         String email = signUpEmail.getText();
@@ -59,6 +83,7 @@ public class SignUpController {
         String confirmPassword = confirmPasswordField.getText();
         String username = userUsername.getText();
 
+        // Validate input fields
         if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || username.isEmpty()) {
             showAlert("Error", "All fields must be filled.");
             return;
@@ -70,6 +95,7 @@ public class SignUpController {
         }
 
         try {
+            // Create user in Firebase Authentication
             UserRecord.CreateRequest request = new UserRecord.CreateRequest()
                     .setEmail(email)
                     .setPassword(password)
@@ -78,11 +104,15 @@ public class SignUpController {
                     .setDisabled(false);
 
             UserRecord userRecord = CapstoneApplication.fauth.createUser(request);
-            showAlert("Success", "Account created successfully: ");
+            showAlert("Success", "Account created successfully.");
 
+            // Create a new User object
             User newUser = new User(userRecord.getUid(), email, username);
+
+            // Save user data to Firestore
             saveUserToDatabase(newUser);
 
+            // Redirect to SignIn screen
             CapstoneApplication.setRoot("SignIn");
 
         } catch (FirebaseAuthException e) {
@@ -92,6 +122,11 @@ public class SignUpController {
         }
     }
 
+    /**
+     * Saves the newly created user to Firestore database.
+     *
+     * @param user The User object containing the user's information.
+     */
     private void saveUserToDatabase(User user) {
         try {
             Firestore db = CapstoneApplication.fstore;
@@ -102,6 +137,12 @@ public class SignUpController {
         }
     }
 
+    /**
+     * Displays an alert dialog with a given title and message.
+     *
+     * @param title   The title of the alert.
+     * @param message The message content of the alert.
+     */
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);

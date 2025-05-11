@@ -1,8 +1,6 @@
 package com.example.capstone;
 
-import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.cloud.FirestoreClient;
@@ -30,83 +28,67 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class  SettingsController implements Initializable {
+/**
+ * Controller for the Settings screen. Manages user actions such as changing username,
+ * switching screens, updating avatars, and deleting accounts.
+ */
+public class SettingsController implements Initializable {
 
-    @FXML
-    private ImageView profileImageView, profilePicture;
-
-    @FXML
-    private TextField changeUserName;
-
-    @FXML
-    private Text deleteAccount;
-
-    @FXML
-    private Text changeAvatarText;
-
-    @FXML
-    private Button eventButton;
-
-    @FXML
-    private Button mainButton;
-
-    @FXML
-    private Label monthYear;
-
-    @FXML
-    private Button settingButton;
-
-    @FXML
-    private Button socialButton;
-
-    @FXML
-    private Label usernameDisplay;
-
-    @FXML
-    private Label weatherLabel;
+    @FXML private ImageView profileImageView, profilePicture;
+    @FXML private TextField changeUserName;
+    @FXML private Text deleteAccount;
+    @FXML private Text changeAvatarText;
+    @FXML private Button eventButton, mainButton, settingButton, socialButton, signOutButton;
+    @FXML private Label monthYear, usernameDisplay, weatherLabel;
 
     private static User currentUser;
 
+    /**
+     * Sets the current user context for the controller.
+     * @param user the currently logged-in user
+     */
     public static void setCurrentUser(User user) {
         currentUser = user;
     }
 
+    /**
+     * Initializes the settings screen components and session data.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        // Screen switchers
+        // Set button navigation
         mainButton.setOnAction(e -> handleScreenSwitch("MainScreen"));
         settingButton.setOnAction(e -> handleScreenSwitch("settingScreen"));
         socialButton.setOnAction(e -> handleScreenSwitch("socialScreen"));
         eventButton.setOnAction(e -> handleScreenSwitch("eventScreen"));
 
+        // Load session username
         if (Session.getUsername() != null) {
             usernameDisplay.setText(Session.getUsername());
         }
 
+        // Load session profile picture
         if (Session.getProfilePicture() != null) {
             Image sessionImage = Session.getProfilePicture();
-
             profilePicture.setImage(sessionImage);
             profileImageView.setImage(sessionImage);
-
-            Circle sidebarClip = new Circle(40, 40, 40); // sidebar
-            profilePicture.setClip(sidebarClip);
-
-            Circle centerClip = new Circle(135, 135, 135); // center big image
-            profileImageView.setClip(centerClip);
+            profilePicture.setClip(new Circle(40, 40, 40));
+            profileImageView.setClip(new Circle(135, 135, 135));
         }
 
         changeAvatarText.setOnMouseClicked(this::handleChangeAvatar);
 
+        // Display current date
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         monthYear.setText(LocalDate.now().format(formatter));
 
+        // Get user from main screen context
         currentUser = MainScreen.getCurrentUser();
-
     }
-    @FXML
-    private Button signOutButton;
+
+    /**
+     * Handles user sign-out by clearing session and loading the sign-in screen.
+     */
     public void handleSignOut(javafx.event.ActionEvent actionEvent) {
         Session.clearSession();
         try {
@@ -120,6 +102,10 @@ public class  SettingsController implements Initializable {
         }
     }
 
+    /**
+     * Switches between different application screens while preserving window settings.
+     * @param screenName the name of the FXML screen to load
+     */
     private void handleScreenSwitch(String screenName) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/capstone/" + screenName + ".fxml"));
@@ -133,14 +119,12 @@ public class  SettingsController implements Initializable {
 
             Scene scene = new Scene(root);
             scene.getStylesheets().clear();
-
             if (screenName.equals("MainScreen")) {
                 scene.getStylesheets().add(getClass().getResource("/Styles/mainscreen.css").toExternalForm());
             }
             scene.getStylesheets().add(getClass().getResource("/Styles/planet.css").toExternalForm());
 
             stage.setScene(scene);
-
             stage.setWidth(width);
             stage.setHeight(height);
             stage.setMaximized(isMaximized);
@@ -152,25 +136,10 @@ public class  SettingsController implements Initializable {
         }
     }
 
-
-    private void loadProfilePicture() {
-        try {
-            // Load default profile picture from resources
-            Image defaultImage = new Image(getClass().getResource("/Images/avatar.png").toExternalForm());
-            profilePicture.setImage(defaultImage);
-            profileImageView.setImage(defaultImage);
-
-            // Make images round
-            Circle sidebarClip = new Circle(40, 40, 40); // Small one
-            profilePicture.setClip(sidebarClip);
-
-            Circle centerClip = new Circle(135, 135, 135); // Big one
-            profileImageView.setClip(centerClip);
-        } catch (Exception e) {
-            System.out.println(" Failed to load default avatar: " + e.getMessage());
-        }
-    }
-
+    /**
+     * Prompts user to choose an image file and updates the profile picture.
+     * @param event the mouse click event
+     */
     @FXML
     private void handleChangeAvatar(MouseEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -182,22 +151,21 @@ public class  SettingsController implements Initializable {
         File selectedFile = fileChooser.showOpenDialog(null);
         if (selectedFile != null) {
             Image newImage = new Image(selectedFile.toURI().toString());
-
             profilePicture.setImage(newImage);
             profileImageView.setImage(newImage);
-
             Session.setProfilePicture(newImage);
 
-            Circle sidebarClip = new Circle(40, 40, 40);
-            profilePicture.setClip(sidebarClip);
-
-            Circle centerClip = new Circle(135, 135, 135);
-            profileImageView.setClip(centerClip);
+            profilePicture.setClip(new Circle(40, 40, 40));
+            profileImageView.setClip(new Circle(135, 135, 135));
 
             System.out.println("Profile picture updated and saved to session!");
         }
     }
 
+    /**
+     * Handles deletion of the user's account from Firestore and FirebaseAuth.
+     * @param event the mouse click event
+     */
     @FXML
     private void deleteUserAccount(MouseEvent event) {
         if (currentUser == null) {
@@ -205,52 +173,52 @@ public class  SettingsController implements Initializable {
             return;
         }
 
-        // Confirmation popup
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirm Account Deletion");
         alert.setHeaderText("Are you sure you want to delete your account?");
         alert.setContentText("This action cannot be undone.");
-
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             String uid = currentUser.getUid();
             Firestore db = FirestoreClient.getFirestore();
             db.collection("users").document(uid).delete().addListener(() -> {
-                System.out.println(" Firestore user document deleted.");
-            try {
-                FirebaseAuth.getInstance().deleteUser(uid);
-                System.out.println("User deleted from Firebase Authentication.");
-                Platform.runLater(() -> {
-                    showAlert(Alert.AlertType.INFORMATION, "Account deleted successfully.");
-                    goToSignInScreen();
-                });
-
-            }  catch (FirebaseAuthException e) {
-                System.err.println(" Failed to delete user from Firebase Auth: " + e.getMessage());
-                Platform.runLater(() -> showAlert(Alert.AlertType.ERROR, "Auth deletion failed."));
-            }
-
+                System.out.println("Firestore user document deleted.");
+                try {
+                    FirebaseAuth.getInstance().deleteUser(uid);
+                    System.out.println("User deleted from Firebase Authentication.");
+                    Platform.runLater(() -> {
+                        showAlert(Alert.AlertType.INFORMATION, "Account deleted successfully.");
+                        goToSignInScreen();
+                    });
+                } catch (FirebaseAuthException e) {
+                    System.err.println("Failed to delete user from Firebase Auth: " + e.getMessage());
+                    Platform.runLater(() -> showAlert(Alert.AlertType.ERROR, "Auth deletion failed."));
+                }
             }, Runnable::run);
-
         }
     }
 
-    private void goToSignInScreen(){
-        try{
+    /**
+     * Redirects the user to the sign-in screen.
+     */
+    private void goToSignInScreen() {
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/capstone/SignIn.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) deleteAccount.getScene().getWindow();
             Scene scene = new Scene(root);
-
             scene.getStylesheets().add(getClass().getResource("/Styles/planet.css").toExternalForm());
             stage.setScene(scene);
             stage.show();
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Updates the current user's username in Firestore and UI.
+     */
     @FXML
     private void changeUsernameOnAction() {
         String newUsername = changeUserName.getText().trim();
@@ -265,11 +233,9 @@ public class  SettingsController implements Initializable {
             return;
         }
 
-        // Update UI
         usernameDisplay.setText(newUsername);
-        Session.setUsername(newUsername);  // Persist in session
+        Session.setUsername(newUsername);
 
-        // Update Firestore
         Firestore db = FirestoreClient.getFirestore();
         db.collection("users").document(currentUser.getUid())
                 .update("username", newUsername)
@@ -279,6 +245,11 @@ public class  SettingsController implements Initializable {
                 }, Runnable::run);
     }
 
+    /**
+     * Shows an alert with custom message and styling.
+     * @param type the type of the alert (information, error, etc.)
+     * @param message the message to display
+     */
     private void showAlert(Alert.AlertType type, String message) {
         Alert alert = new Alert(type);
         alert.setTitle("Username Change");
@@ -288,8 +259,4 @@ public class  SettingsController implements Initializable {
         dialogPane.getStylesheets().add(getClass().getResource("/Styles/planet.css").toExternalForm());
         alert.showAndWait();
     }
-
-
-
-
 }
