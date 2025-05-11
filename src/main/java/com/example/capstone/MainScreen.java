@@ -15,6 +15,7 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -186,6 +187,20 @@ public class MainScreen implements Initializable {
                 updateCalendar();
             }
         });
+    }
+    @FXML
+    private Button signOutButton;
+    public void handleSignOut(javafx.event.ActionEvent actionEvent) {
+        Session.clearSession();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/capstone/SignIn.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) signOutButton.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -718,6 +733,8 @@ public class MainScreen implements Initializable {
         });
 
     }
+
+
 
     private void saveEventToFirestore(String title, String time, LocalDate date, String repeat, LocalDate endDate) {
         Firestore db = CapstoneApplication.fstore;
