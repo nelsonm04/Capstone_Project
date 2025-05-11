@@ -22,6 +22,11 @@ import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.*;
 
+/**
+ * Controller for the main screen of the application. Handles the display and interaction of the main user interface,
+ * including calendar navigation, user profile, event creation, and handling user authentication.
+ * Implements the {@link Initializable} interface for initializing UI components after they are loaded.
+ */
 public class MainScreen implements Initializable {
 
     @FXML
@@ -64,7 +69,13 @@ public class MainScreen implements Initializable {
 
     User user = MainScreen.getCurrentUser();
     String uid = user.getUid();
-
+    /**
+     * Initializes the main screen, including setting the current date, configuring buttons,
+     * and loading holidays for the current year.
+     *
+     * @param location The location used to resolve relative paths for the root object.
+     * @param resources The resources used to localize the root object.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         LocalDate now = LocalDate.now();
@@ -98,6 +109,10 @@ public class MainScreen implements Initializable {
         }).start();
 
     }
+    /**
+     * Opens a dialog for adding a new event, allowing the user to input event details such as name,
+     * time, date, repetition settings, and end date.
+     */
     private void openAddEventDialog() {
         Dialog<EventDataWithDate> dialog = new Dialog<>();
         dialog.setTitle("New Event");

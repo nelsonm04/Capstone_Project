@@ -16,8 +16,22 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
+/**
+ * A JavaFX application that displays a splash screen with a background image,
+ * a logo, brand text, and animated transitions before launching the main application.
+ * <p>
+ * The splash screen includes fade-in, zoom-in, pause, and fade-out animations
+ * to create a smooth introduction to the application.
+ * </p>
+ */
 public class SplashScreen extends Application {
 
+    /**
+     * The main entry point for JavaFX applications.
+     * Initializes and displays the splash screen with animated effects and transitions.
+     *
+     * @param splashStage the primary stage used for displaying the splash screen
+     */
     @Override
     public void start(Stage splashStage) {
         // Load background image
@@ -94,6 +108,10 @@ public class SplashScreen extends Application {
         fadeIn.play(); // Start the animation sequence
     }
 
+    /**
+     * Launches the main application after the splash screen finishes.
+     * This method creates a new instance of the main application class and starts it.
+     */
     private void openMainApp() {
         CapstoneApplication mainApp = new CapstoneApplication();
         Stage mainStage = new Stage();
@@ -104,6 +122,11 @@ public class SplashScreen extends Application {
         }
     }
 
+    /**
+     * Main method to launch the JavaFX application.
+     *
+     * @param args command-line arguments passed to the application
+     */
     public static void main(String[] args) {
         launch();
     }
