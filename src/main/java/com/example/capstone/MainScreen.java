@@ -179,10 +179,7 @@ public class MainScreen implements Initializable {
                     alert.showAndWait();
                     return;
                 }
-
                 String timeToSave = timeInput.isEmpty() ? "N/A" : timeInput;
-
-                // ✅ Save including repeat and end date
                 saveEventToFirestore(eventData.name, timeToSave, eventData.date, eventData.repeat, eventData.endDate);
                 updateCalendar();
             }
