@@ -83,27 +83,3 @@
     -fx-background-color: #1f1f1f;
 }
 
-/* ComboBox styling */
-.user-dropdown {
-    -fx-background-color: #2a2a2a;
-    -fx-border-color:   #555;
-    -fx-border-radius:  4px;
-    -fx-prompt-text-fill: #888;
-}
-
-/* ListView styling */
-.friends-list {
-    -fx-control-inner-background: #333;
-    -fx-cell-hover-color:         #444;
-    -fx-selection-bar:            #556;
-    -fx-selection-bar-non-focused: #666;
-}
-
-/* VBox styling */
-.pending-requests {
-    -fx-background-color: #222;
-    -fx-border-color:     #444;
-    -fx-border-width:     1px;
-    -fx-border-radius:    6px;
-}
-

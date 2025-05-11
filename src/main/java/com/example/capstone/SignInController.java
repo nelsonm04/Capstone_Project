@@ -1,13 +1,16 @@
 package com.example.capstone;
 
 import com.google.firebase.auth.UserRecord;
+import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
@@ -25,6 +28,11 @@ public class SignInController {
 
     @FXML
     private Button userSignUp;
+
+    @FXML
+    private Circle shootingStar1;  // Shooting Star 1
+    @FXML
+    private Circle shootingStar2;  // Shooting Star 2
 
     @FXML
     void userSignIn(ActionEvent event) {
@@ -90,8 +98,6 @@ public class SignInController {
                     Stage stage = (Stage) userLogIn.getScene().getWindow();
                     Scene scene = new Scene(root);
 
-
-
                     scene.getStylesheets().add(getClass().getResource("/styles/planet.css").toExternalForm());
                     scene.getStylesheets().add(getClass().getResource("/styles/mainscreen.css").toExternalForm());
 
@@ -137,5 +143,22 @@ public class SignInController {
         dialogPane.getStylesheets().add(getClass().getResource("/Styles/planet.css").toExternalForm());
 
         alert.showAndWait();
+    }
+
+    @FXML
+    public void initialize() {
+        animateShootingStar(shootingStar1, 5, 1000);
+        animateShootingStar(shootingStar2, 7, 1200);
+    }
+
+    private void animateShootingStar(Circle star, int durationSeconds, int distance) {
+        TranslateTransition transition = new TranslateTransition();
+        transition.setDuration(Duration.seconds(durationSeconds));
+        transition.setNode(star);
+        transition.setByX(-distance); // Move left by "distance" amount
+        transition.setByY(distance);  // Move down by "distance" amount
+        transition.setCycleCount(TranslateTransition.INDEFINITE);
+        transition.setAutoReverse(true);  // Loop the animation back and forth
+        transition.play();
     }
 }
