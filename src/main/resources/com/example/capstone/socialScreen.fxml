@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -34,13 +35,18 @@
             <padding>
                 <Insets bottom="15" left="15" right="15" top="15" />
             </padding>
-            <ImageView fx:id="profilePicture" fitHeight="80" fitWidth="80" />
+            <ImageView fx:id="profilePicture" fitHeight="80" fitWidth="80">
+            <image>
+               <Image url="@../../../Images/bunny.png" />
+            </image></ImageView>
             <Label fx:id="usernameDisplay" text="Username" />
             <Pane prefHeight="150" prefWidth="150" />
             <Button fx:id="mainButton" text="Main" />
             <Button fx:id="socialButton" text="Social" />
             <Button fx:id="eventButton" text="Events" />
             <Button fx:id="settingButton" text="Settings" />
+            <Button fx:id="signOutButton" onAction="#handleSignOut" text="Sign Out" />
+
         </VBox>
     </left>
 
@@ -51,18 +57,20 @@
 
             <HBox spacing="8">
                 <Label style="-fx-text-fill:white;" text="Add Friend:" />
-                <ComboBox fx:id="userDropdown" prefWidth="200" />
+            <VBox prefHeight="0.0" prefWidth="100.0" />
+                <ComboBox fx:id="userDropdown" prefWidth="200" styleClass="user-dropdown" />
                 <Button fx:id="sendRequestButton" text="Send" />
             </HBox>
 
             <HBox spacing="40">
-                <VBox spacing="10">
+            <VBox prefHeight="340.0" prefWidth="14.0" />
+                <VBox prefHeight="340.0" prefWidth="402.0" spacing="10">
                     <Label style="-fx-font-size:20px; -fx-text-fill:white;" text="Friends List" />
-                    <ListView fx:id="friendsListView" prefHeight="300" prefWidth="300" />
+                    <ListView fx:id="friendsListView" prefHeight="300" prefWidth="307.0" styleClass="friends-list" />
                 </VBox>
             <VBox prefHeight="340.0" prefWidth="310.0" />
                 <VBox fx:id="pendingRequestsVBox" spacing="10">
-                    <Label style="-fx-font-size:20px; -fx-text-fill:white;" text="Pending Requests" />
+                    <Label style="-fx-font-size:20px; -fx-text-fill:white;" text="Pending Requests" textFill="WHITE" />
                 </VBox>
             </HBox>
 

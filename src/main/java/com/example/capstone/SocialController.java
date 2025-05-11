@@ -59,11 +59,25 @@ public class SocialController implements Initializable {
         }
         monthYear.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("MM/dd/yyyy")));
 
-        // load Social functions
         loadAllUsers();
         loadFriends();
         loadPendingRequests();
         sendRequestButton.setOnAction(e -> sendFriendRequest());
+    }
+
+    @FXML
+    private Button signOutButton;
+    public void handleSignOut(javafx.event.ActionEvent actionEvent) {
+        Session.clearSession();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/capstone/SignIn.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) signOutButton.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void handleScreenSwitch(String screenName) {
@@ -98,7 +112,6 @@ public class SocialController implements Initializable {
             e.printStackTrace();
         }
     }
-
 
     public void loadAllUsers() {
         try {

@@ -3,6 +3,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.GridPane?>
@@ -11,8 +13,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.control.ScrollPane?>
-<BorderPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.capstone.MainScreen" >
+<BorderPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.capstone.MainScreen">
 
     <!-- Top Bar -->
     <top>
@@ -38,14 +39,17 @@
             <padding>
                 <Insets bottom="15" left="15" right="15" top="15" />
             </padding>
-            <ImageView fx:id="profilePicture" fitHeight="80" fitWidth="80" />
+            <ImageView fx:id="profilePicture" fitHeight="80" fitWidth="80">
+            <image>
+               <Image url="@../../../Images/bunny.png" />
+            </image></ImageView>
             <Label fx:id="usernameDisplay" text="Username" />
             <Pane prefHeight="150" prefWidth="150" />
             <Button fx:id="mainButton" text="Main" />
             <Button fx:id="socialButton" text="Social" />
             <Button fx:id="eventButton" text="Events" />
             <Button fx:id="settingButton" text="Settings" />
-            <Button fx:id="signOutButton" text="Sign Out" onAction="#handleSignOut" />
+            <Button fx:id="signOutButton" onAction="#handleSignOut" text="Sign Out" />
 
 
         </VBox>
@@ -57,14 +61,9 @@
             <padding>
                 <Insets bottom="20" left="20" right="20" top="20" />
             </padding>
-            <ScrollPane fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS">
+            <ScrollPane fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
                 <content>
-                    <GridPane fx:id="calendarGrid"
-                              alignment="CENTER"
-                              hgap="2"
-                              vgap="2"
-                              maxWidth="Infinity"
-                              maxHeight="Infinity" />
+                    <GridPane fx:id="calendarGrid" alignment="CENTER" hgap="2" maxHeight="Infinity" maxWidth="Infinity" vgap="2" />
                 </content>
             </ScrollPane>
         </VBox>
