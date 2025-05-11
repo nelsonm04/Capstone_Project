@@ -22,7 +22,7 @@ An interactive JavaFX calendar app with Firebase Firestore–backed scheduling a
   Change your display name or delete your account with built-in confirmation dialogs.
 
 ## Tech Stack
-- **Java 17**  
+- **Java 23**  
 - **JavaFX 23** (FXML layouts, Scene Builder)  
 - **Firebase Admin SDK** for Google Cloud Firestore  
 - **Maven** (with Maven Wrapper `mvnw` / `mvnw.cmd`)  
