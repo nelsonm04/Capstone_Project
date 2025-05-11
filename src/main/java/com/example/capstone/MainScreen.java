@@ -92,10 +92,10 @@ public class MainScreen implements Initializable {
             profilePicture.setClip(sidebarClip);
 
         }
-//        new Thread(() -> {
-//            holidayMap = HolidayAPI.fetchUSHolidays(currentYear);
-//            Platform.runLater(this::updateCalendar);
-//        }).start();
+        new Thread(() -> {
+            holidayMap = HolidayAPI.fetchUSHolidays(currentYear);
+            Platform.runLater(this::updateCalendar);
+        }).start();
 
     }
     private void openAddEventDialog() {
@@ -730,8 +730,6 @@ public class MainScreen implements Initializable {
         });
 
     }
-
-
 
     private void saveEventToFirestore(String title, String time, LocalDate date, String repeat, LocalDate endDate) {
         Firestore db = CapstoneApplication.fstore;

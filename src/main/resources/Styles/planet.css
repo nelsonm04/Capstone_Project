@@ -83,3 +83,50 @@
     -fx-background-color: #1f1f1f;
 }
 
+
+/* planet.css */
+.shooting-star {
+    -fx-fill: white;
+    -fx-opacity: 0.8;
+    -fx-radius: 3;
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255, 0.8), 10, 0.2, 0, 0);
+}
+
+/* Animation for shooting stars */
+@keyframes shoot {
+    0% {
+        -fx-layout-x: 100%;
+        -fx-layout-y: 0%;
+        -fx-opacity: 1;
+    }
+    100% {
+        -fx-layout-x: -100%;
+        -fx-layout-y: 100%;
+        -fx-opacity: 0;
+    }
+}
+
+/* ComboBox styling -rakib */
+.user-dropdown {
+    -fx-background-color: #2a2a2a;
+    -fx-border-color:   #555;
+    -fx-border-radius:  4px;
+    -fx-prompt-text-fill: #888;
+}
+
+/* ListView styling -rakib*/
+.friends-list {
+    -fx-control-inner-background: #333;
+    -fx-cell-hover-color:         #444;
+    -fx-selection-bar:            #556;
+    -fx-selection-bar-non-focused: #666;
+}
+
+/* VBox styling -rakib*/
+.pending-requests {
+    -fx-background-color: #222;
+    -fx-border-color:     #444;
+    -fx-border-width:     1px;
+    -fx-border-radius:    6px;
+}
+
