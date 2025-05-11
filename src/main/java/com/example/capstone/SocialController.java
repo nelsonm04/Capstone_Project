@@ -7,6 +7,8 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -160,11 +162,14 @@ public class SocialController implements Initializable {
                         for (DocumentSnapshot d : db.collection("users")
                                 .document(currentUid)
                                 .collection("friends")
-                                .get().get().getDocuments())
+                                .get().get().getDocuments()) {
                             friends.add(d.getString("username"));
+                        }
 
                         Platform.runLater(() -> {
                             friendsListView.getItems().setAll(friends);
+
+                            // 1) set up the Unfriend button per cell
                             friendsListView.setCellFactory(lv -> new ListCell<>() {
                                 private final Button btn = new Button("Unfriend");
                                 {
@@ -174,15 +179,101 @@ public class SocialController implements Initializable {
                                 protected void updateItem(String name, boolean empty) {
                                     super.updateItem(name, empty);
                                     if (empty || name == null) {
-                                        setText(null); setGraphic(null);
+                                        setText(null);
+                                        setGraphic(null);
                                     } else {
-                                        setText(name); setGraphic(btn);
+                                        setText(name);
+                                        setGraphic(btn);
                                     }
                                 }
                             });
+
+                            // 2) attach click listener to trigger the popup
+                            friendsListView.setOnMouseClicked(evt -> {
+                                String selected = friendsListView.getSelectionModel().getSelectedItem();
+                                if (selected != null) {
+                                    showFriendEvents(selected);
+                                }
+                            });
                         });
-                    } catch (Exception e) { e.printStackTrace(); }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }, Runnable::run);
+    }
+
+    private void showFriendEvents(String friendUsername) {
+        // Find their UID
+        String friendUid;
+        try {
+            friendUid = db.collection("users")
+                    .whereEqualTo("username", friendUsername)
+                    .get().get()
+                    .getDocuments().get(0).getId();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        // Query upcoming events
+        LocalDate today = LocalDate.now();
+        ApiFuture<QuerySnapshot> future = db.collection("users")
+                .document(friendUid)
+                .collection("events")
+                .whereGreaterThanOrEqualTo("date", today.toString())
+                .orderBy("date")
+                .limit(5)     // show next 5 events
+                .get();
+
+        List<String> eventLines = new ArrayList<>();
+        try {
+            for (QueryDocumentSnapshot doc : future.get().getDocuments()) {
+                String title = doc.getString("title");
+                String date  = doc.getString("date");
+                String time  = doc.getString("time");
+                eventLines.add(date + "  •  " + time + " → " + title);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Platform.runLater(() -> {
+            if (eventLines.isEmpty()) {
+                Alert info = new Alert(Alert.AlertType.INFORMATION,
+                        friendUsername + " has no upcoming events."
+                );
+                DialogPane dp = info.getDialogPane();
+                dp.getStylesheets().add(
+                        getClass().getResource("/Styles/dialog.css").toExternalForm()
+                );
+                dp.getStyleClass().add("dialog-pane");
+                info.initOwner(mainButton.getScene().getWindow());
+                info.showAndWait();
+            } else {
+                ListView<String> listView = new ListView<>();
+                listView.getItems().setAll(eventLines);
+                listView.getStyleClass().add("event-list");
+                listView.setMaxWidth(Region.USE_PREF_SIZE);
+                listView.setPrefSize(350, Math.min(eventLines.size() * 40, 200));
+
+                VBox content = new VBox(10, listView);
+                content.setAlignment(Pos.CENTER);
+                content.setPadding(new Insets(10));
+
+                Dialog<Void> dlg = new Dialog<>();
+                dlg.setTitle(friendUsername + "’s Next Events");
+                DialogPane dp = dlg.getDialogPane();
+
+                dp.getStylesheets().add(
+                        getClass().getResource("/Styles/dialog.css").toExternalForm()
+                );
+                dp.getStyleClass().add("dialog-pane");
+                dp.setContent(content);
+                dp.getButtonTypes().setAll(ButtonType.CLOSE);
+                dlg.initOwner(mainButton.getScene().getWindow());
+                dlg.showAndWait();
+            }
+        });
     }
 
     private void sendFriendRequest() {
