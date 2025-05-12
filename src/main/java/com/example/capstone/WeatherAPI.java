@@ -12,6 +12,13 @@ import java.net.URL;
  * This class includes a method to retrieve the current weather description and temperature
  * for a given city.
  */
+
+
+/**
+ * Provides functionality for fetching weather information from the OpenWeatherMap API.
+ * This class includes a method to retrieve the current weather description and temperature
+ * for a given city.
+ */
 public class WeatherAPI {
 
     // API key for accessing OpenWeatherMap API
@@ -28,14 +35,23 @@ public class WeatherAPI {
      */
     public static String getWeather(String city) {
         try {
+            // Print to console for debugging
+            System.out.println("Fetching weather for: " + city);
+
+            // Add a timestamp to avoid caching
+            long timestamp = System.currentTimeMillis();
+
             // Constructing the API URL with the city and API key
             String urlString = "https://api.openweathermap.org/data/2.5/weather?q=" +
-                    city + "&appid=" + API_KEY + "&units=metric";
+                    city + "&appid=" + API_KEY + "&units=metric&nocache=" + timestamp;
 
             // Creating a URL object from the string and opening a connection
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
+
+            // Optional: log HTTP response code
+            System.out.println("HTTP Response Code: " + conn.getResponseCode());
 
             // Reading the response from the API
             InputStreamReader reader = new InputStreamReader(conn.getInputStream());

@@ -368,7 +368,7 @@ public class SocialController implements Initializable {
     /**
      * Loads any pending friend requests for the current user and displays them.
      */
-    private void loadPendingRequests() {
+    protected void loadPendingRequests() {
         db.collection("users")
                 .document(currentUid)
                 .collection("friendRequests")
