@@ -2,6 +2,7 @@ package com.example.capstone;
 
 import com.google.cloud.firestore.Firestore;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -107,6 +108,20 @@ public class MainScreen implements Initializable {
             holidayMap = HolidayAPI.fetchUSHolidays(currentYear);
             Platform.runLater(this::updateCalendar);
         }).start();
+        loadWeather("New York");
+
+    }
+
+    private void loadWeather(String city) {
+        Task<String> t = new Task<>() {
+            @Override
+            protected String call() {
+                return WeatherAPI.getWeatherFahrenheit("New York");
+            }
+        };
+        t.setOnSucceeded(e -> weatherLabel.setText(t.getValue()));
+        t.setOnFailed(e  -> weatherLabel.setText("Failed: " + t.getException().getMessage()));
+        new Thread(t).start();
 
     }
     /**

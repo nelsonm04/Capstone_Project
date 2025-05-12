@@ -27,7 +27,7 @@
 
             <Region HBox.hgrow="ALWAYS" />
             <ImageView fitHeight="24" fitWidth="24" />
-            <Label text="67°" />
+            <Label fx:id="weatherLabel" text="67°" />
         </HBox>
     </top>
 

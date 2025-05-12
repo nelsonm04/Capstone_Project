@@ -6,6 +6,8 @@ import com.google.gson.JsonParser;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Provides functionality for fetching weather information from the OpenWeatherMap API.
@@ -20,63 +22,44 @@ import java.net.URL;
  * for a given city.
  */
 public class WeatherAPI {
-
-    // API key for accessing OpenWeatherMap API
     private static final String API_KEY = "988c6987d3427577d66fec2686876d61";
 
-    /**
-     * Fetches the current weather information for a given city.
-     * Makes a request to the OpenWeatherMap API to get the weather description and temperature
-     * for the specified city.
-     *
-     * @param city The name of the city for which weather data is to be fetched.
-     * @return A string containing the weather description and temperature of the city.
-     *         If an error occurs while fetching the data, returns a message indicating the failure.
-     */
-    public static String getWeather(String city) {
+    public static String getWeatherFahrenheit(String city) {
         try {
-            // Print to console for debugging
-            System.out.println("Fetching weather for: " + city);
+            // URL-encode your city name
+            String encodedCity = URLEncoder.encode(city, StandardCharsets.UTF_8);
+            // imperial = Fahrenheit
+            String urlString = String.format(
+                    "https://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s&units=imperial",
+                    encodedCity, API_KEY
+            );
 
-            // Add a timestamp to avoid caching
-            long timestamp = System.currentTimeMillis();
-
-            // Constructing the API URL with the city and API key
-            String urlString = "https://api.openweathermap.org/data/2.5/weather?q=" +
-                    city + "&appid=" + API_KEY + "&units=metric&nocache=" + timestamp;
-
-            // Creating a URL object from the string and opening a connection
-            URL url = new URL(urlString);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            HttpURLConnection conn = (HttpURLConnection) new URL(urlString).openConnection();
             conn.setRequestMethod("GET");
 
-            // Optional: log HTTP response code
-            System.out.println("HTTP Response Code: " + conn.getResponseCode());
+            int code = conn.getResponseCode();
+            InputStreamReader reader;
+            if (code == 200) {
+                reader = new InputStreamReader(conn.getInputStream());
+            } else {
+                reader = new InputStreamReader(conn.getErrorStream());
+                JsonObject err = JsonParser.parseReader(reader).getAsJsonObject();
+                return "API error: " + err.get("message").getAsString();
+            }
 
-            // Reading the response from the API
-            InputStreamReader reader = new InputStreamReader(conn.getInputStream());
-            JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
-
-            // Extracting weather description and temperature from the response
-            String weather = jsonObject
+            JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
+            String weatherDesc = json
                     .getAsJsonArray("weather")
-                    .get(0)
-                    .getAsJsonObject()
-                    .get("description")
-                    .getAsString();
-
-            double temp = jsonObject
+                    .get(0).getAsJsonObject()
+                    .get("description").getAsString();
+            double tempF = json
                     .getAsJsonObject("main")
-                    .get("temp")
-                    .getAsDouble();
+                    .get("temp").getAsDouble();
 
-            // Returning the formatted weather information
-            return "Weather in " + city + ": " + weather + ", " + temp + "°C";
-
+            return String.format("Weather in %s: %s, %.1f°F", city, weatherDesc, tempF);
         } catch (Exception e) {
-            // Handling errors and printing stack trace
-            e.printStackTrace();
-            return "Could not fetch weather data.";
+            return "Error: " + e.getMessage();
         }
+
     }
 }

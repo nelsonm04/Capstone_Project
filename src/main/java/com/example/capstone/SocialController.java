@@ -4,6 +4,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -76,6 +77,23 @@ public class SocialController implements Initializable {
         loadPendingRequests();
 
         sendRequestButton.setOnAction(e -> sendFriendRequest());
+        loadWeather("New York");
+    }
+
+    @FXML
+    private  Label weatherLabel;
+
+    private void loadWeather(String city) {
+        Task<String> t = new Task<>() {
+            @Override
+            protected String call() {
+                return WeatherAPI.getWeatherFahrenheit("New York");
+            }
+        };
+        t.setOnSucceeded(e -> weatherLabel.setText(t.getValue()));
+        t.setOnFailed(e  -> weatherLabel.setText("Failed: " + t.getException().getMessage()));
+        new Thread(t).start();
+
     }
 
     /**

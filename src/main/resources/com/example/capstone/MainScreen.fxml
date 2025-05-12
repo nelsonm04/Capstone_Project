@@ -29,7 +29,7 @@
             <Region HBox.hgrow="ALWAYS" />
          <Button fx:id="addEventButton" mnemonicParsing="false" text="Add Event" />
             <ImageView fitHeight="24" fitWidth="24" />
-            <Label text="67°" />
+            <Label fx:id="weatherLabel" text="67°" />
         </HBox>
     </top>
 

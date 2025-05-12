@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.cloud.FirestoreClient;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -84,6 +85,21 @@ public class SettingsController implements Initializable {
 
         // Get user from main screen context
         currentUser = MainScreen.getCurrentUser();
+
+        loadWeather("New York");
+    }
+
+    private void loadWeather(String city) {
+        Task<String> t = new Task<>() {
+            @Override
+            protected String call() {
+                return WeatherAPI.getWeatherFahrenheit("New York");
+            }
+        };
+        t.setOnSucceeded(e -> weatherLabel.setText(t.getValue()));
+        t.setOnFailed(e  -> weatherLabel.setText("Failed: " + t.getException().getMessage()));
+        new Thread(t).start();
+
     }
 
     /**
